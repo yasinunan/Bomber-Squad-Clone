@@ -36,6 +36,19 @@ namespace YU.Template
         public delegate void OnScoreValueChangedDelegate();
         public event OnScoreValueChangedDelegate OnScoreValueUpdated;
 
+        //
+        // Events
+        //
+
+        public delegate void OnStartLandingDelegate();
+        public event OnStartLandingDelegate OnStartLanding;
+
+        public delegate void OnRevertCrosshairVisibilityDelegate();
+        public event OnRevertCrosshairVisibilityDelegate OnRevertCrosshairVisibility;
+
+        public delegate void OnChangeCrosshairMaterialDelegate(int material);
+        public event OnChangeCrosshairMaterialDelegate OnChangeCrosshairMaterial;
+
         private bool isLevelEnded;
 
         //___________________________________________________________________________________________________
@@ -147,9 +160,26 @@ namespace YU.Template
             OnScoreValueUpdated?.Invoke();
         }
 
+        //___________________________________________________________________________________________________
 
+        public void StartLanding()
+        {
+            OnStartLanding?.Invoke();
+        }
 
+        //___________________________________________________________________________________________________
 
+        public void RevertCrosshairVisibility()
+        {
+            OnRevertCrosshairVisibility?.Invoke();
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void ChangeCrosshairMaterial(int material)
+        {
+            OnChangeCrosshairMaterial?.Invoke(material);
+        }
 
     }
 }

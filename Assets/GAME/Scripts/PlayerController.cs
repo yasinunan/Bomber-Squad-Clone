@@ -1,47 +1,177 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
-public class PlayerController : MonoBehaviour
+namespace YU.Template
 {
-    [SerializeField] private float speed;
-    [SerializeField] private float rotationSpeed = 720f;
-    [SerializeField] private float yaw;
-    [SerializeField] private float yawAmount = 120f;
-
-    [SerializeField] private VariableJoystick variableJoystick;
-    private Vector3 moveDir;
-    void Start()
+    public class PlayerController : MonoBehaviour
     {
 
-    }
+        [SerializeField] private Animator planeAnimator;
+        [SerializeField] private VariableJoystick variableJoystick;
 
-    // Update is called once per frame
-    void Update()
-    {
+        [SerializeField] private float flySpeed;
+        [SerializeField] private float rotationSpeed = 720f;
+        [SerializeField] private float takeOffDuration = 0.5f;
 
-        transform.position += transform.forward * speed * Time.deltaTime;
+        [SerializeField] private bool canFly = false;
+        [SerializeField] private bool isFlying = false;
+        [SerializeField] private bool isLanding = false;
 
-        float horizontal = variableJoystick.Horizontal;
-        float vertical = variableJoystick.Vertical;
-        float roll = Mathf.Lerp(0f,45f, Mathf.Abs(horizontal)* -Mathf.Sign(horizontal));
 
-        yaw += horizontal * yawAmount * Time.deltaTime;
 
-        moveDir = Vector3.right * horizontal + Vector3.forward * vertical;
-        float angle = Mathf.Atan2(horizontal, vertical) * Mathf.Rad2Deg;
+        private Vector3 moveDir;
 
-        if (moveDir != Vector3.zero)
+        //___________________________________________________________________________________________________
+
+        private void OnEnable()
         {
-            Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
-           // transform.localRotation = Quaternion.Euler(Vector3.up * yaw + Vector3.forward * roll);
+            LevelManager.Instance.controller.OnStartLanding += OnStartLanding;
         }
 
-       // 
+        //___________________________________________________________________________________________________
 
-        // yaw += variableJoystick.Horizontal * yawAmount * Time.deltaTime;
-        // transform.localRotation = Quaternion.Euler(Vector3.up * yaw);
-        //Debug.Log(variableJoystick.Horizontal.ToString());
+        private void OnDisable()
+        {
+            LevelManager.Instance.controller.OnStartLanding -= OnStartLanding;
+        }
+
+        //___________________________________________________________________________________________________
+
+        void Start()
+        {
+
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void FixedUpdate()
+        {
+            Vector3 forward = transform.TransformDirection(Vector3.forward);
+
+            if (Physics.Raycast(transform.position, forward, 2f) && !isLanding)
+            {
+                Debug.Log("hit detected");
+                isLanding = true;
+                isFlying = false;
+                canFly = false;
+
+               
+                LevelManager.Instance.controller.StartLanding();
+            }
+        }
+
+        //___________________________________________________________________________________________________
+
+
+        void Update()
+        {
+            if (!GameEngine.Instance.IsPlaying())
+            {
+                return;
+            }
+
+            float horizontal = variableJoystick.Horizontal;
+            float vertical = variableJoystick.Vertical;
+
+            Vector3 moveDirection = Vector3.right * horizontal + Vector3.forward * vertical;
+
+            if (moveDirection != Vector3.zero && !isFlying && !isLanding)
+            {
+                isFlying = true;
+                TakeOff();
+
+            }
+
+            if (canFly)
+            {
+                PlaneMovement(moveDirection);
+            }
+
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Vector3 forward = transform.TransformDirection(Vector3.forward) * 2f;
+            Gizmos.DrawRay(transform.position, forward);
+        }
+
+        //___________________________________________________________________________________________________
+
+
+        private void PlaneMovement(Vector3 moveDir)
+        {
+            transform.position += transform.forward * flySpeed * Time.deltaTime;
+            if (moveDir != Vector3.zero)
+            {
+                Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+            }
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void TakeOff()
+        {
+            Debug.Log("PLANE IS TAKING OFF");
+
+            transform.DORotate(new Vector3(-45f, 0f, 0f), takeOffDuration).OnComplete(() =>
+            {
+                transform.DOMove(new Vector3(0f, 3f, 9f), takeOffDuration * 5f).OnComplete(() =>
+                {
+                    transform.DORotate(new Vector3(0f, 0f, 0f), takeOffDuration / 2f).OnComplete(() =>
+                    {
+                        canFly = true;
+                        isLanding = false;
+                        LevelManager.Instance.controller.RevertCrosshairVisibility();
+                    });
+                });
+            });
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void LandThePlane()
+        {
+
+            transform.DOMove(new Vector3(0f, 3f, 9f), takeOffDuration * 1f).OnComplete(() =>
+            {
+                  
+                Debug.Log("1");
+                transform.DORotate(new Vector3(45f, 180f, 0f), takeOffDuration * 1f).OnComplete(() =>
+                {
+                    Debug.Log("2");
+                    transform.DOMove(Vector3.zero, takeOffDuration * 5f).OnComplete(() =>
+                    {
+                        Debug.Log("3");
+                        transform.DORotate(Vector3.zero, takeOffDuration * 1f).OnComplete(() =>
+                        {
+                            Debug.Log("4");
+                            isLanding = false;
+                        });
+
+                    });
+                });
+            });
+        }
+
+        // EVENTS
+        //___________________________________________________________________________________________________
+        //
+
+        private void OnStartLanding()
+        {
+           LevelManager.Instance.controller.RevertCrosshairVisibility();
+            LandThePlane();
+        }
+
+        //___________________________________________________________________________________________________
+
+
     }
+
 }
