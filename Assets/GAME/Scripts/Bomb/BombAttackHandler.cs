@@ -62,7 +62,8 @@ namespace YU.Template
                     bomb.transform.position = this.transform.position;
                     bomb.gameObject.SetActive(true);
 
-                    
+                    LevelManager .Instance.controller.BombDropped();
+
                     yield return new WaitForSeconds(dropTimeRate);
                 }
                 else
@@ -76,24 +77,27 @@ namespace YU.Template
 
         private void OnDropBombs(int detectedEnemyCount)
         {
-            Debug.Log("bomb event triggered");
-
-            if (detectedEnemyCount > 0)
+           // Debug.Log("bomb event triggered");
+            if (LevelManager.Instance.datas.HasEnoughBombs())
             {
-                if (!isAttacking)
+                
+                if (detectedEnemyCount > 0)
                 {
-                    isAttacking = true;
-
-                    if (coroutine == null)
+                    if (!isAttacking)
                     {
-                        coroutine = StartCoroutine(DropBomb());
+                        isAttacking = true;
+
+                        if (coroutine == null)
+                        {
+                            coroutine = StartCoroutine(DropBomb());
+                        }
                     }
                 }
-            }
-            else
-            {
-                isAttacking = false;
+                else
+                {
+                    isAttacking = false;
 
+                }
             }
         }
 

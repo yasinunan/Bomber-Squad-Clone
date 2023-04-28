@@ -59,6 +59,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2103147795cbd44abf48430f93e0db9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  animDuration: 0.35
+  maxLocalScale: 2
 --- !u!1001 &1381762742557201928
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -7,15 +7,19 @@ namespace YU.Template
 
     public class LevelDatas : MonoBehaviour
     {
-       //___________________________________________________________________________________________________
+        //___________________________________________________________________________________________________
 
 
         public int levelNumber = 0;
         public bool isLevelFinished = false;
         public int nScore = 0;
-
-        
         public int nCoins;
+
+        [SerializeField] private int bombAmount = 30;
+        [SerializeField] private int currentBombAmount = 30;
+
+
+
 
         //___________________________________________________________________________________________________
 
@@ -23,6 +27,7 @@ namespace YU.Template
         void Awake()
         {
             ResetValues(true);
+            InventoryManager.Instance.SetBombsCount(30);
         }
 
         //___________________________________________________________________________________________________
@@ -32,7 +37,7 @@ namespace YU.Template
         {
             //GameEngine.Instance.OnGameInitialize += OnGameInitialize;
             GameEngine.Instance.OnPrepareNewGame += OnPrepareNewGame;
- 
+
             GameEngine.Instance.OnFinishGame += OnFinishGame;
             //GameEngine.Instance.OnExitGame += OnExitGame;
 
@@ -44,6 +49,11 @@ namespace YU.Template
             //LevelManager.Instance.controller.OnLevelChanged += OnLevelChanged;
             //LevelManager.Instance.controller.OnLevelProgressValueChanged += OnLevelProgressValueChanged;
             //LevelManager.Instance.controller.OnScoreValueUpdated += OnScoreValueChanged;
+
+            LevelManager.Instance.controller.OnBombDropped += OnBombDropped;
+            LevelManager.Instance.controller.OnPlaneGrouned += OnPlaneGrouned;
+            LevelManager.Instance.controller.OnBombCapacityUpgraded -= OnBombCapacityUpgraded;
+
         }
 
         //___________________________________________________________________________________________________
@@ -69,6 +79,10 @@ namespace YU.Template
             //LevelManager.Instance.controller.OnLevelChanged -= OnLevelChanged;
             //LevelManager.Instance.controller.OnLevelProgressValueChanged -= OnLevelProgressValueChanged;
             //LevelManager.Instance.controller.OnScoreValueUpdated -= OnScoreValueChanged;
+
+            LevelManager.Instance.controller.OnBombDropped -= OnBombDropped;
+            LevelManager.Instance.controller.OnPlaneGrouned -= OnPlaneGrouned;
+            LevelManager.Instance.controller.OnBombCapacityUpgraded -= OnBombCapacityUpgraded;
         }
 
         //___________________________________________________________________________________________________
@@ -79,12 +93,16 @@ namespace YU.Template
 
         void ResetValues(bool bIncreaseLevel = false)
         {
-            nScore = 0;
+            bombAmount = InventoryManager.Instance.GetBombsCount();
+            currentBombAmount = bombAmount;
 
+            LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
+
+            nScore = 0;
 
             isLevelFinished = false;
 
-           
+
             if (bIncreaseLevel)
             {
                 int nMaxFinishedLevel = PlayerStats.Instance.GetMaxFinishedLevel();
@@ -131,7 +149,7 @@ namespace YU.Template
 
             SetCurrentLevel(nLastFinishedLevel + 1);
 
-          
+
         }
 
         //___________________________________________________________________________________________________
@@ -184,6 +202,23 @@ namespace YU.Template
         //___________________________________________________________________________________________________
 
         //
+        // BOMB
+        //
+        //___________________________________________________________________________________________________
+        //___________________________________________________________________________________________________
+
+        public bool HasEnoughBombs()
+        {
+            if (currentBombAmount > 0)
+            { return true; }
+            else
+            { return false; }
+        }
+
+
+
+
+        //
         // EVENTS TO IMPLEMENT
         //
         //___________________________________________________________________________________________________
@@ -196,11 +231,6 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-
-
-        //___________________________________________________________________________________________________
-
-
         void OnFinishGame(bool bWin = true)
         {
             if (bWin)
@@ -209,16 +239,37 @@ namespace YU.Template
                 UpdatePlayerStats();
             }
 
-           
+
         }
 
         //___________________________________________________________________________________________________
 
+        void OnBombDropped()
+        {
+            currentBombAmount--;
+            LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
+        }
 
+        //___________________________________________________________________________________________________
 
+        void OnPlaneGrouned()
+        {
+            currentBombAmount = bombAmount;
+            LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
+        }
 
+        //___________________________________________________________________________________________________
+
+        void OnBombCapacityUpgraded(int newCapacity)
+        {
+            bombAmount = newCapacity;
+            InventoryManager.Instance.SetBombsCount(bombAmount);
+            currentBombAmount = InventoryManager.Instance.GetBombsCount();
+
+            LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
+        }
 
 
     }
-    
+
 }

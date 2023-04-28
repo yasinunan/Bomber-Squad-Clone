@@ -79,6 +79,11 @@ namespace YU.Template
 
         private void FixedUpdate()
         {
+            if (!GameEngine.Instance.IsPlaying())
+            {
+                return;
+            }
+
             Vector3 forward = transform.TransformDirection(Vector3.forward);
 
             // sending a raycast forward to detect when to start landing
@@ -111,20 +116,6 @@ namespace YU.Template
             }
 
             detectedEnemyCount = detectedEnemy;
-
-            /*detectedEnemyCount = hitColliders.Length;
-
-            foreach (Collider collectible in hitColliders)
-            {
-                if (collectible.gameObject.TryGetComponent(out CollectibleMoney collectibleMoney))
-                {
-                    collectibleMoney.Interact();
-                }
-                if (collectible.gameObject.TryGetComponent(out Enemy enemy))
-                {
-                    enemy.Interact();
-                }
-            }*/
         }
 
         //___________________________________________________________________________________________________
@@ -214,6 +205,8 @@ namespace YU.Template
                     transform.DORotate(Vector3.zero, takeOffDuration * 2f).OnComplete(() =>
                     {
                         isLanding = false;
+
+                        LevelManager.Instance.controller.PlaneGrounded();
                     });
                 });
 

@@ -42,6 +42,9 @@ namespace YU.Template
 
         public delegate void OnStartLandingDelegate();
         public event OnStartLandingDelegate OnStartLanding;
+        public delegate void OnPlaneGrounedDelegate();
+        public event OnPlaneGrounedDelegate OnPlaneGrouned;
+
 
         public delegate void OnRevertCrosshairVisibilityDelegate();
         public event OnRevertCrosshairVisibilityDelegate OnRevertCrosshairVisibility;
@@ -49,8 +52,34 @@ namespace YU.Template
         public delegate void OnChangeCrosshairMaterialDelegate(int materialIndex);
         public event OnChangeCrosshairMaterialDelegate OnChangeCrosshairMaterial;
 
+
         public delegate void OnDropBombsDelegate(int detectedEnemyCount);
         public event OnDropBombsDelegate OnDropBombs;
+
+        public delegate void OnBombDroppedDelegate();
+        public event OnBombDroppedDelegate OnBombDropped;
+
+        public delegate void OnBombAmountChangedDelegate(int currentAmount, int maxAmount);
+        public event OnBombAmountChangedDelegate OnBombAmountChanged;
+
+
+
+        public delegate void OnDestroyedEnemyDelegate();
+        public event OnDestroyedEnemyDelegate OnDestroyedEnemy;
+
+        public delegate void OnCollectedMoneyDelegate();
+        public event OnCollectedMoneyDelegate OnCollectedMoney;
+
+
+
+        public delegate void OnBombCapacityUpgradedDelegate(int newCapacity);
+        public event OnBombCapacityUpgradedDelegate OnBombCapacityUpgraded;
+
+        public delegate void OnArmorUpgradedDelegate(float newArmor);
+        public event OnArmorUpgradedDelegate OnArmorUpgraded;
+
+        public delegate void OnDamageUpgradedDelegate(float newDamage);
+        public event OnDamageUpgradedDelegate OnDamageUpgraded;
 
         private bool isLevelEnded;
 
@@ -189,6 +218,61 @@ namespace YU.Template
         public void DropBombs(int detectedEnemyCount)
         {
             OnDropBombs?.Invoke(detectedEnemyCount);
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void BombDropped()
+        {
+            OnBombDropped?.Invoke();
+        }
+        //___________________________________________________________________________________________________
+
+        public void CollectedMoney()
+        {
+            OnCollectedMoney?.Invoke();
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void DestroyedEnemy()
+        {
+            OnDestroyedEnemy?.Invoke();
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void PlaneGrounded()
+        {
+            OnPlaneGrouned?.Invoke();
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void BombAmountChanged(int currentAmount, int maxAmount)
+        {
+            OnBombAmountChanged?.Invoke(currentAmount, maxAmount);
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void BombCapacityUpgraded(int newCapacity)
+        {
+            OnBombCapacityUpgraded?.Invoke(newCapacity);
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void ArmorUpgraded(int newArmor)
+        {
+            OnArmorUpgraded?.Invoke(newArmor);
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void DamageUpgraded(float newDamage)
+        {
+            OnDamageUpgraded?.Invoke(newDamage);
         }
 
     }
