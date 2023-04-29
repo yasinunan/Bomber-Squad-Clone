@@ -102,7 +102,7 @@ namespace YU.Template
 
             if (currentHealth <= 0f)
             {
-                
+
                 meshRenderer.enabled = false;
                 for (int i = 0; i <= moneyPrefabCount; i++)
                 {
@@ -114,6 +114,7 @@ namespace YU.Template
                     money.SetActive(true);
                     money.transform.DOMove(v3RandomPoint, duration).SetEase(Ease.OutQuint).OnComplete(() =>
                     {
+                        LevelManager.Instance.controller.EnemyAttack(damage);
                         this.gameObject.SetActive(false);
                     });
 

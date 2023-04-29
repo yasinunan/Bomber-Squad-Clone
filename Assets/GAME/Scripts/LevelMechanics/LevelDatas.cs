@@ -18,6 +18,9 @@ namespace YU.Template
         [SerializeField] private int bombAmount = 30;
         [SerializeField] private int currentBombAmount = 30;
 
+        [SerializeField] private float maxHealth = 100f;
+        [SerializeField] private float currentHealth;
+
 
 
 
@@ -51,8 +54,9 @@ namespace YU.Template
             //LevelManager.Instance.controller.OnScoreValueUpdated += OnScoreValueChanged;
 
             LevelManager.Instance.controller.OnBombDropped += OnBombDropped;
-            LevelManager.Instance.controller.OnPlaneGrouned += OnPlaneGrouned;
-            LevelManager.Instance.controller.OnBombCapacityUpgraded -= OnBombCapacityUpgraded;
+            LevelManager.Instance.controller.OnPlaneGrounded += OnPlaneGrounded;
+            LevelManager.Instance.controller.OnBombCapacityUpgraded += OnBombCapacityUpgraded;
+            LevelManager.Instance.controller.OnEnemyAttack += OnEnemyAttack;
 
         }
 
@@ -81,8 +85,10 @@ namespace YU.Template
             //LevelManager.Instance.controller.OnScoreValueUpdated -= OnScoreValueChanged;
 
             LevelManager.Instance.controller.OnBombDropped -= OnBombDropped;
-            LevelManager.Instance.controller.OnPlaneGrouned -= OnPlaneGrouned;
+            LevelManager.Instance.controller.OnPlaneGrounded -= OnPlaneGrounded;
             LevelManager.Instance.controller.OnBombCapacityUpgraded -= OnBombCapacityUpgraded;
+            LevelManager.Instance.controller.OnEnemyAttack -= OnEnemyAttack;
+
         }
 
         //___________________________________________________________________________________________________
@@ -95,8 +101,11 @@ namespace YU.Template
         {
             bombAmount = InventoryManager.Instance.GetBombsCount();
             currentBombAmount = bombAmount;
-
             LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
+
+            currentHealth = maxHealth;
+            LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
+
 
             nScore = 0;
 
@@ -185,14 +194,12 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-
         public void SetScore(int nValue)
         {
             nScore = nValue;
         }
 
         //___________________________________________________________________________________________________
-
 
         public void IncreaseScore(int nIncOrDec = 1)
         {
@@ -252,7 +259,7 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        void OnPlaneGrouned()
+        void OnPlaneGrounded()
         {
             currentBombAmount = bombAmount;
             LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
@@ -267,6 +274,14 @@ namespace YU.Template
             currentBombAmount = InventoryManager.Instance.GetBombsCount();
 
             LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
+        }
+
+        //___________________________________________________________________________________________________
+
+        void OnEnemyAttack(float damage)
+        {
+            currentHealth -= damage;
+            LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
         }
 
 

@@ -42,8 +42,8 @@ namespace YU.Template
 
         public delegate void OnStartLandingDelegate();
         public event OnStartLandingDelegate OnStartLanding;
-        public delegate void OnPlaneGrounedDelegate();
-        public event OnPlaneGrounedDelegate OnPlaneGrouned;
+        public delegate void OnPlaneGroundedDelegate();
+        public event OnPlaneGroundedDelegate OnPlaneGrounded;
 
 
         public delegate void OnRevertCrosshairVisibilityDelegate();
@@ -80,6 +80,15 @@ namespace YU.Template
 
         public delegate void OnDamageUpgradedDelegate(float newDamage);
         public event OnDamageUpgradedDelegate OnDamageUpgraded;
+
+
+
+        public delegate void OnEnemyAttackDelegate(float damage);
+        public event OnEnemyAttackDelegate OnEnemyAttack;
+
+        public delegate void OnHealthChangedDelegate(float currentHealth, float maxHealth);
+        public event OnHealthChangedDelegate OnHealthChanged;
+       
 
         private bool isLevelEnded;
 
@@ -244,7 +253,7 @@ namespace YU.Template
 
         public void PlaneGrounded()
         {
-            OnPlaneGrouned?.Invoke();
+            OnPlaneGrounded?.Invoke();
         }
 
         //___________________________________________________________________________________________________
@@ -275,6 +284,19 @@ namespace YU.Template
             OnDamageUpgraded?.Invoke(newDamage);
         }
 
+        //___________________________________________________________________________________________________
+
+        public void EnemyAttack(float damage)
+        {
+            OnEnemyAttack?.Invoke(damage);
+        }
+
+         //___________________________________________________________________________________________________
+
+        public void HealthChanged(float currentHealth, float maxHealth)
+        {
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        }
     }
 }
 
