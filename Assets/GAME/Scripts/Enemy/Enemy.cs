@@ -5,7 +5,7 @@ using DG.Tweening;
 
 namespace YU.Template
 {
-    public class Enemy : MonoBehaviour, IInteractable, IDamagable
+    public class Enemy : MonoBehaviour,  IDamagable
     {
         private const string MONEY = "Money";
         private const string BULLET = "Bullet";
@@ -28,6 +28,7 @@ namespace YU.Template
         private float shootingTime;
 
         private bool isAttacking = false;
+        private bool isDestroyed = false;
         //___________________________________________________________________________________________________
 
         private void Awake()
@@ -67,6 +68,8 @@ namespace YU.Template
 
                     if (isPlayerInRange())
                     {
+                        particle.transform.LookAt(player.transform);
+
                         TriggerDamageEvent();
                         PlayParticle();
                     }
@@ -77,7 +80,6 @@ namespace YU.Template
                     bullet.transform.position = transform.position;
                     bullet.SetActive(true);*/
 
-                    particle.transform.LookAt(player.transform);
                 }
             }
         }
@@ -98,13 +100,15 @@ namespace YU.Template
 
         public void TakeDamage(float damage)
         {
+            //Debug.Log(damage);
             currentHealth -= damage;
 
             if (currentHealth <= 0f)
             {
+                currentHealth = 0f;
 
                 meshRenderer.enabled = false;
-                for (int i = 0; i <= moneyPrefabCount; i++)
+                for (int i = 0; i < moneyPrefabCount; i++)
                 {
                     Vector2 v2RandomPoint = Random.insideUnitCircle * circleRadiusToDropMoney;
                     Vector3 v3RandomPoint = transform.position + new Vector3(v2RandomPoint.x, -0.1f, v2RandomPoint.y);
@@ -114,10 +118,13 @@ namespace YU.Template
                     money.SetActive(true);
                     money.transform.DOMove(v3RandomPoint, duration).SetEase(Ease.OutQuint).OnComplete(() =>
                     {
-                        LevelManager.Instance.controller.EnemyAttack(damage);
-                        this.gameObject.SetActive(false);
+                        if (!isDestroyed)
+                        {
+                            isDestroyed = true;
+                            LevelManager.Instance.controller.DestroyedEnemy();
+                            this.gameObject.SetActive(false);
+                        }
                     });
-
                 }
             }
         }
@@ -140,7 +147,7 @@ namespace YU.Template
 
         private void TriggerDamageEvent()
         {
-            //LevelManager.Instance.controller.EnemyAttack(damage);
+            LevelManager.Instance.controller.EnemyAttack(damage);
         }
 
         //___________________________________________________________________________________________________
@@ -161,6 +168,16 @@ namespace YU.Template
             if (particle != null && particle.isPlaying == false)
             {
                 particle.Play();
+            }
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void OnDropBombs(GameObject enemy)
+        {
+            if(ReferenceEquals(this.gameObject,enemy))
+            {
+                Interact();
             }
         }
     }

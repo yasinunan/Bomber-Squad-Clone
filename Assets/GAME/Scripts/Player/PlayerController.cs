@@ -7,30 +7,23 @@ namespace YU.Template
 {
     public class PlayerController : MonoBehaviour
     {
-        private int _detectedEnemyCount;
-        private int detectedEnemyCount
-        {
-            get { return _detectedEnemyCount; }
-            set
-            {
-                if (_detectedEnemyCount != value)
-                {
-                    _detectedEnemyCount = value;
+        const string strLayerBorder = "Border";
+        const string strLayerAirField = "AirField";
+        const string strLayerAttackable = "Attackable";
+        const string strLayerMoney = "Money";
 
-                    Debug.Log("Detected enemy count changed, bomb event triggered");
-                    LevelManager.Instance.controller.DropBombs(_detectedEnemyCount);
 
-                    if (_detectedEnemyCount > 0)
-                    { LevelManager.Instance.controller.ChangeCrosshairMaterial(1); }  //calling a function from controller script to trigger an event to change crosshair material to black
-                    else
-                    { LevelManager.Instance.controller.ChangeCrosshairMaterial(0); }
-                }
-            }
-        }
+
+
+        private int nLayerBorder;
+        private int nLayerAirField;
+        private int nLayerAttackable;
+        private int nLayerMoney;
 
         [SerializeField] private Animator planeAnimator;
         [SerializeField] private VariableJoystick variableJoystick;
         [SerializeField] private Transform airfieldStartPoint, airfieldEndPoint;
+        [SerializeField] private ParticleSystem upgradeParticle;
 
         [Space]
 
@@ -52,27 +45,67 @@ namespace YU.Template
         [SerializeField] private bool canFly = false;
         [SerializeField] private bool isFlying = false;
         [SerializeField] private bool isLanding = false;
+        [SerializeField] private bool droppedBomb = false;
 
+        private bool isThereEnemyUnderMe = false;
+        private bool crossHeadIsRed = false;
+
+        private int _detectedEnemyCount;
+        private int detectedEnemyCount
+        {
+            get { return _detectedEnemyCount; }
+            set
+            {
+                if (value != _detectedEnemyCount && value > 0)
+                {
+                    _detectedEnemyCount = value;
+                    crossHeadIsRed = true;
+                    LevelManager.Instance.controller.ChangeCrosshairMaterial(1);
+                }
+                else if (value == 0 && value != _detectedEnemyCount)
+                {
+                    _detectedEnemyCount = value;
+                    LevelManager.Instance.controller.ChangeCrosshairMaterial(0);
+                    crossHeadIsRed = true;
+                    droppedBomb = false;
+                }
+            }
+        }
 
         //___________________________________________________________________________________________________
 
         private void OnEnable()
         {
+            LevelManager.Instance.controller.OnPlaneTakingOff += OnPlaneTakingOff;
             LevelManager.Instance.controller.OnStartLanding += OnStartLanding;
+            LevelManager.Instance.controller.OnBombCapacityUpgraded += OnBombCapacityUpgraded;
+            LevelManager.Instance.controller.OnArmorUpgraded += OnArmorUpgraded;
+            LevelManager.Instance.controller.OnDamageUpgraded += OnDamageUpgraded;
+
+            GameEngine.Instance.OnPrepareNewGame += OnPrepareNewGame;
         }
 
         //___________________________________________________________________________________________________
 
         private void OnDisable()
         {
+            LevelManager.Instance.controller.OnPlaneTakingOff -= OnPlaneTakingOff;
             LevelManager.Instance.controller.OnStartLanding -= OnStartLanding;
+            LevelManager.Instance.controller.OnBombCapacityUpgraded -= OnBombCapacityUpgraded;
+            LevelManager.Instance.controller.OnArmorUpgraded -= OnArmorUpgraded;
+            LevelManager.Instance.controller.OnDamageUpgraded -= OnDamageUpgraded;
+
+            GameEngine.Instance.OnPrepareNewGame -= OnPrepareNewGame;
         }
 
         //___________________________________________________________________________________________________
 
         void Start()
         {
-
+            nLayerBorder = LayerMask.NameToLayer(strLayerBorder);
+            nLayerAirField = LayerMask.NameToLayer(strLayerAirField);
+            nLayerAttackable = LayerMask.NameToLayer(strLayerAttackable);
+            nLayerMoney = LayerMask.NameToLayer(strLayerMoney);
         }
 
         //___________________________________________________________________________________________________
@@ -86,36 +119,51 @@ namespace YU.Template
 
             Vector3 forward = transform.TransformDirection(Vector3.forward);
 
-            // sending a raycast forward to detect when to start landing
-            if (Physics.Raycast(transform.position, forward, raycastDistance, airFieldLayerMask) && !isLanding)
+            // sending a raycast forward to detect when to start landing or border
+            if (Physics.Raycast(transform.position, forward, out RaycastHit hit, raycastDistance, airFieldLayerMask) && !isLanding)
             {
-                // Debug.Log("hit detected");
-                isLanding = true;
-                isFlying = false;
-                canFly = false;
+                if (hit.collider.gameObject.layer.Equals(nLayerAirField))
+                {
+                    isLanding = true;
+                    isFlying = false;
+                    canFly = false;
 
-                LevelManager.Instance.controller.StartLanding();
+                    LevelManager.Instance.controller.StartLanding();
+                }
+                else if (hit.collider.gameObject.layer.Equals(nLayerBorder))
+                {
+                    Quaternion toRotation = Quaternion.LookRotation(-transform.forward, Vector3.up);
+                    transform.rotation = toRotation;
+                }
             }
 
             // sending a sphere cast on the ground to detect any enemies or money
             Collider[] hitColliders = Physics.OverlapSphere(transform.position - playerHeight * Vector3.up, sphereCastRadius, attackableLayerMask);
-            int detectedEnemy = 0;
 
-            for (int i = 0; i < hitColliders.Length; i++)
+            int detectedEnemy = 0;
+            if (hitColliders.Length > 0)
             {
-                if (hitColliders[i].gameObject.TryGetComponent(out CollectibleMoney collectibleMoney))
+                for (int i = 0; i < hitColliders.Length; i++)
                 {
-                    collectibleMoney.Interact();
+                    if (hitColliders[i].gameObject.layer.Equals(nLayerAttackable))
+                    {
+                        detectedEnemy++;
+                        LevelManager.Instance.controller.DropBombs(hitColliders[i].gameObject, true);
+                    }
+                    else if(hitColliders[i].gameObject.layer.Equals(nLayerMoney))
+                    {
+                        LevelManager.Instance.controller.DropBombs(hitColliders[i].gameObject, false);
+                    }
                 }
-                else if (hitColliders[i].gameObject.TryGetComponent(out Enemy enemy))
-                {
-                    detectedEnemy++;
-                    Debug.Log("Enemy count in range: " + detectedEnemy.ToString());
-                    enemy.Interact();
-                }
+                detectedEnemyCount = detectedEnemy;
+            }
+            else
+            {
+                detectedEnemyCount = detectedEnemy;
             }
 
-            detectedEnemyCount = detectedEnemy;
+
+
         }
 
         //___________________________________________________________________________________________________
@@ -135,7 +183,9 @@ namespace YU.Template
             if (moveDirection != Vector3.zero && !isFlying && !isLanding)
             {
                 isFlying = true;
-                TakeOff();
+
+                // Trigger take off event
+                LevelManager.Instance.controller.PlaneTakingOff();
             }
 
             if (canFly)
@@ -170,7 +220,7 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        private void TakeOff()
+        private void OnPlaneTakingOff()
         {
             Debug.Log("PLANE IS TAKING OFF");
 
@@ -187,7 +237,7 @@ namespace YU.Template
                     });
                 });
 
-                transform.DOMove(new Vector3(0f, 3f, 9f), takeOffDuration * 4f).SetEase(Ease.Unset);
+                transform.DOMove(airfieldEndPoint.position, takeOffDuration * 4f).SetEase(Ease.Unset);
             });
 
 
@@ -197,26 +247,59 @@ namespace YU.Template
 
         private void LandThePlane()
         {
+            float fTime = Vector3.Distance(transform.position, airfieldEndPoint.position) / flySpeed;
 
-            transform.DOMove(new Vector3(0f, 3f, 9f), takeOffDuration * 3f).OnComplete(() =>
+            transform.DOMove(airfieldEndPoint.position, fTime).OnComplete(() =>
             {
                 transform.DORotate(new Vector3(45f, 180f, 0f), takeOffDuration * 2f).OnComplete(() =>
                 {
                     transform.DORotate(Vector3.zero, takeOffDuration * 2f).OnComplete(() =>
                     {
                         isLanding = false;
-
                         LevelManager.Instance.controller.PlaneGrounded();
                     });
                 });
 
                 transform.DOMove(Vector3.zero, takeOffDuration * 5f);
             });
+
+            transform.DOLookAt(airfieldStartPoint.position, fTime);
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void PlayParticle()
+        {
+            if (upgradeParticle != null)
+            {
+                if (upgradeParticle.isPlaying)
+                {
+                    upgradeParticle.Stop();
+                    upgradeParticle.Play();
+                }
+                else
+                {
+                    upgradeParticle.Play();
+                }
+
+            }
+
         }
 
         // EVENTS
         //___________________________________________________________________________________________________
         //
+
+        private void OnPrepareNewGame(bool bIsRematch)
+        {
+            canFly = false;
+            isFlying = false;
+            isLanding = false;
+            transform.position = Vector3.zero;
+            transform.rotation = Quaternion.identity;
+        }
+
+        //___________________________________________________________________________________________________
 
         private void OnStartLanding()
         {
@@ -226,7 +309,26 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
+        void OnBombCapacityUpgraded(int newCapacity)
+        {
+            PlayParticle();
+        }
+
+        //___________________________________________________________________________________________________
+
+        void OnDamageUpgraded(float damage)
+        {
+            PlayParticle();
+        }
+
+        //___________________________________________________________________________________________________
+
+        void OnArmorUpgraded(float damage)
+        {
+            PlayParticle();
+        }
 
     }
 
 }
+

@@ -9,27 +9,36 @@ namespace YU.Template
     {
         //___________________________________________________________________________________________________
 
-
+        [SerializeField] private LevelDataSO LevelData;
+        public List<GameObject> EnemyList = new List<GameObject>();
         public int levelNumber = 0;
         public bool isLevelFinished = false;
-        public int nScore = 0;
-        public int nCoins;
+        [SerializeField] private int nMoney = 0;
+        [SerializeField] private int moneyIncreaseAmount = 4;
 
-        [SerializeField] private int bombAmount = 30;
+
+        private int bombAmount = 30;
+        [SerializeField] private int defaultBombAmount;
         [SerializeField] private int currentBombAmount = 30;
 
-        [SerializeField] private float maxHealth = 100f;
-        [SerializeField] private float currentHealth;
+        [SerializeField] private int destroyedEnemy;
+        private float maxHealth;
+        private float currentHealth;
+        private float healAmount;
+        private float armor;
+        private float damage;
 
+        private bool isHealing = false;
 
-
+        private Coroutine HealCoroutine;
 
         //___________________________________________________________________________________________________
 
 
-        void Awake()
+        void Start()
         {
             ResetValues(true);
+
             InventoryManager.Instance.SetBombsCount(30);
         }
 
@@ -55,8 +64,12 @@ namespace YU.Template
 
             LevelManager.Instance.controller.OnBombDropped += OnBombDropped;
             LevelManager.Instance.controller.OnPlaneGrounded += OnPlaneGrounded;
+            LevelManager.Instance.controller.OnPlaneTakingOff += OnPlaneTakingOff;
             LevelManager.Instance.controller.OnBombCapacityUpgraded += OnBombCapacityUpgraded;
+            LevelManager.Instance.controller.OnArmorUpgraded += OnArmorUpgraded;
             LevelManager.Instance.controller.OnEnemyAttack += OnEnemyAttack;
+            LevelManager.Instance.controller.OnDestroyedEnemy += OnDestroyedEnemy;
+            LevelManager.Instance.controller.OnCollectedMoney += OnCollectedMoney;
 
         }
 
@@ -86,30 +99,36 @@ namespace YU.Template
 
             LevelManager.Instance.controller.OnBombDropped -= OnBombDropped;
             LevelManager.Instance.controller.OnPlaneGrounded -= OnPlaneGrounded;
+            LevelManager.Instance.controller.OnPlaneTakingOff -= OnPlaneTakingOff;
             LevelManager.Instance.controller.OnBombCapacityUpgraded -= OnBombCapacityUpgraded;
+            LevelManager.Instance.controller.OnArmorUpgraded -= OnArmorUpgraded;
             LevelManager.Instance.controller.OnEnemyAttack -= OnEnemyAttack;
+            LevelManager.Instance.controller.OnDestroyedEnemy -= OnDestroyedEnemy;
+            LevelManager.Instance.controller.OnCollectedMoney -= OnCollectedMoney;
 
         }
 
         //___________________________________________________________________________________________________
 
-
-        //___________________________________________________________________________________________________
-
-
         void ResetValues(bool bIncreaseLevel = false)
         {
             bombAmount = InventoryManager.Instance.GetBombsCount();
+            if (bombAmount < 1)
+            {
+                bombAmount = defaultBombAmount; ;
+                InventoryManager.Instance.SetBombsCount(bombAmount);
+            }
             currentBombAmount = bombAmount;
             LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
 
+            maxHealth = LevelData.maxHealth;
             currentHealth = maxHealth;
             LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
 
-
-            nScore = 0;
+            moneyIncreaseAmount = LevelData.moneyIncreaseAmount;
 
             isLevelFinished = false;
+            destroyedEnemy = 0;
 
 
             if (bIncreaseLevel)
@@ -135,9 +154,46 @@ namespace YU.Template
             return levelNumber;
         }
 
+        //___________________________________________________________________________________________________
+
+        private IEnumerator HealOnGround()
+        {
+            while (isHealing)
+            {
+                if (currentHealth < maxHealth)
+                {
+                    currentHealth += 10f;
+                    LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
+                    yield return new WaitForSeconds(1f);
+                }
+                else
+                {
+                    currentHealth = maxHealth;
+                    LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
+                    isHealing = false;
+                    yield return null;
+                }
+            }
+
+            yield return null;
+        }
 
         //___________________________________________________________________________________________________
 
+        private void FindEnemies()
+        {
+            if (EnemyList.Count > 0)
+            {
+                EnemyList.Clear();
+                EnemyList.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
+            }
+            else
+            {
+                EnemyList.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
+            }
+        }
+
+        //___________________________________________________________________________________________________
         //
         // UPDATE PLAYER STATS
         //
@@ -173,8 +229,8 @@ namespace YU.Template
         {
             Debug.Log("GameInstanceData: SaveEarningsOfCurrentInstance");
 
-            // save coins
-            InventoryManager.Instance.IncreaseCoinsCount(nCoins);
+            // save money
+            InventoryManager.Instance.IncreaseCoinsCount(nMoney);
 
         }
 
@@ -182,31 +238,34 @@ namespace YU.Template
         //___________________________________________________________________________________________________
 
         //
-        // SCORE
+        // MONEY
         //
         //___________________________________________________________________________________________________
 
 
-        public int GetScore()
+        public int GetMoney()
         {
-            return nScore;
+            return PlayerPrefs.GetInt("Money");
         }
 
         //___________________________________________________________________________________________________
 
-        public void SetScore(int nValue)
+        public void SetMoney(int nValue)
         {
-            nScore = nValue;
+            nMoney = nValue;
+            PlayerPrefs.SetInt("Money", nMoney);
+            LevelManager.Instance.controller.MoneyChanged(nMoney);
         }
 
         //___________________________________________________________________________________________________
 
-        public void IncreaseScore(int nIncOrDec = 1)
+        public void IncreaseMoney(int nIncOrDec = 1)
         {
-            nScore += nIncOrDec;
+            nMoney += nIncOrDec;
+            SetMoney(nMoney);
         }
 
-        //___________________________________________________________________________________________________
+
 
         //
         // BOMB
@@ -226,7 +285,7 @@ namespace YU.Template
 
 
         //
-        // EVENTS TO IMPLEMENT
+        // EVENTS
         //
         //___________________________________________________________________________________________________
 
@@ -234,6 +293,7 @@ namespace YU.Template
         void OnPrepareNewGame(bool bIsRematch = false)
         {
             ResetValues(!bIsRematch);
+            FindEnemies();
         }
 
         //___________________________________________________________________________________________________
@@ -263,6 +323,22 @@ namespace YU.Template
         {
             currentBombAmount = bombAmount;
             LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
+
+            isHealing = true;
+            if (HealCoroutine != null)
+            {
+                StopCoroutine(HealCoroutine);
+                HealCoroutine = StartCoroutine(HealOnGround());
+            }
+            else
+            { HealCoroutine = StartCoroutine(HealOnGround()); }
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void OnPlaneTakingOff()
+        {
+            isHealing = false;
         }
 
         //___________________________________________________________________________________________________
@@ -278,12 +354,52 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        void OnEnemyAttack(float damage)
+        void OnEnemyAttack(float _damage)
         {
-            currentHealth -= damage;
-            LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
+            float calculatedDamage = _damage - (_damage * armor);
+            if (currentHealth - calculatedDamage <= 0f)
+            {
+                currentHealth = 0f;
+                LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
+                LevelManager.Instance.controller.FailLevel();
+            }
+            else
+            {
+                currentHealth -= calculatedDamage;
+                LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
+            }
         }
 
+        //___________________________________________________________________________________________________
+
+
+        //___________________________________________________________________________________________________
+
+        void OnArmorUpgraded(float damage)
+        {
+            armor = InventoryManager.Instance.GetArmor();
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void OnCollectedMoney()
+        {
+            IncreaseMoney(moneyIncreaseAmount);
+
+
+
+        }
+
+        private void OnDestroyedEnemy()
+        {
+            destroyedEnemy++;
+            LevelManager.Instance.controller.ChangeLevelProgressValue(destroyedEnemy, EnemyList.Count);
+
+            if (destroyedEnemy == EnemyList.Count)
+            {
+                LevelManager.Instance.controller.EnableNextLevel();
+            }
+        }
 
     }
 

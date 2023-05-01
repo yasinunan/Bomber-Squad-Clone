@@ -9,7 +9,6 @@ namespace YU.Template
     {
         [SerializeField] private GameObject player;
         [SerializeField] private float animDuration = 0.5f;
-        [SerializeField] private float maxLocalScale = 5f;
         private bool didInteract = false;
 
         //___________________________________________________________________________________________________
@@ -22,8 +21,18 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
+        void OnEnable()
+        {
+            LevelManager.Instance.controller.OnDropBombs += OnDropBombs;
+
+        }
+
+        //___________________________________________________________________________________________________
+
         private void OnDisable()
         {
+            LevelManager.Instance.controller.OnDropBombs -= OnDropBombs;
+
             transform.localScale = Vector3.one;
             didInteract = false;
         }
@@ -46,6 +55,20 @@ namespace YU.Template
                 });
             }
         }
+
+        //___________________________________________________________________________________________________
+
+        private void OnDropBombs(GameObject enemy, bool bIsObjectEnemy)
+        {
+            if(!bIsObjectEnemy)
+            {
+                if(ReferenceEquals(enemy, this.gameObject))
+                {
+                    Interact();
+                }
+            }
+        }
+
     }
 }
 

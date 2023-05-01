@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3738303235571638887}
   - component: {fileID: 3738303235571638886}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,8 +56,8 @@ MonoBehaviour:
     m_Bits: 256
   dropHeight: 3
   dropDuraiton: 0.6
-  sphereCastRadius: 0.75
-  damage: 1
+  sphereCastRadius: 0.5
+  damage: 2
   canExplode: 0
 --- !u!1001 &253756623769628141
 PrefabInstance:

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - FxTemporaire
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -13,11 +14,11 @@ TagManager:
   - Water
   - UI
   - Ground
-  - Airfield
+  - AirField
   - Attackable
   - Money
-  - 
-  - 
+  - Border
+  - Bomb
   - 
   - 
   - 

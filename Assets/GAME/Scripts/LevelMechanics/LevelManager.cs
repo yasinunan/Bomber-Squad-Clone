@@ -49,8 +49,7 @@ namespace YU.Template
             controller.OnLevelCompleted += OnLevelCompleted;
             controller.OnLevelDraw += OnLevelDraw;
             controller.OnLevelChanged += OnLevelChanged;
-            controller.OnLevelProgressValueChanged += OnLevelProgressValueChanged;
-            controller.OnScoreValueUpdated += OnScoreValueChanged;
+       
         }
 
         //___________________________________________________________________________________________________
@@ -68,8 +67,7 @@ namespace YU.Template
             controller.OnLevelCompleted -= OnLevelCompleted;
             controller.OnLevelDraw -= OnLevelDraw;
             controller.OnLevelChanged -= OnLevelChanged;
-            controller.OnLevelProgressValueChanged -= OnLevelProgressValueChanged;
-            controller.OnScoreValueUpdated -= OnScoreValueChanged;
+
         }
 
         //___________________________________________________________________________________________________
@@ -151,8 +149,8 @@ namespace YU.Template
         {
             datas.isLevelFinished = true;
 
-            datas.SetScore(0);
-            controller.UpdateScoreValue();
+           // datas.SetMoney(0);
+           controller.UpdateScoreValue();
 
 
             GameEngine.Instance.FinishGame(false);
@@ -194,19 +192,10 @@ namespace YU.Template
         {
         }
 
-        //___________________________________________________________________________________________________
-
-
-        private void OnLevelProgressValueChanged(float fMin, float fMax, float fVal)
-        {
-        }
 
         //___________________________________________________________________________________________________
 
 
-        public void OnScoreValueChanged()
-        {
-        }
 
         //___________________________________________________________________________________________________
 

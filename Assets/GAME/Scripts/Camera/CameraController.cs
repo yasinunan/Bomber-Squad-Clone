@@ -26,7 +26,7 @@ namespace YU.Template
 
         Vector3 v3Velocity = Vector3.zero;
 
-        public Camera camera;
+        public Camera _camera;
 
 
         private Tweener camShakeTweener;
@@ -35,7 +35,7 @@ namespace YU.Template
 
         void Awake()
         {
-            camera = Camera.main;
+            _camera = Camera.main;
 
             goPlayer = GameObject.Find("Player");
             /*

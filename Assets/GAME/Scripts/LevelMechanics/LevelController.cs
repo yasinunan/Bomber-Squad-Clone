@@ -30,7 +30,7 @@ namespace YU.Template
         //
         // Generic
         //
-        public delegate void OnLevelProgressValueChangedDelegate(float fMin, float fMax, float fVal);
+        public delegate void OnLevelProgressValueChangedDelegate(float fCur, float fMax);
         public event OnLevelProgressValueChangedDelegate OnLevelProgressValueChanged;
 
         public delegate void OnScoreValueChangedDelegate();
@@ -40,8 +40,13 @@ namespace YU.Template
         // Events
         //
 
+        
+        public delegate void OnPlaneTakingOffDelegate();
+        public event OnPlaneTakingOffDelegate OnPlaneTakingOff;
+
         public delegate void OnStartLandingDelegate();
         public event OnStartLandingDelegate OnStartLanding;
+
         public delegate void OnPlaneGroundedDelegate();
         public event OnPlaneGroundedDelegate OnPlaneGrounded;
 
@@ -53,7 +58,7 @@ namespace YU.Template
         public event OnChangeCrosshairMaterialDelegate OnChangeCrosshairMaterial;
 
 
-        public delegate void OnDropBombsDelegate(int detectedEnemyCount);
+        public delegate void OnDropBombsDelegate(GameObject enemy, bool bIsObjectEnemy);
         public event OnDropBombsDelegate OnDropBombs;
 
         public delegate void OnBombDroppedDelegate();
@@ -69,6 +74,9 @@ namespace YU.Template
 
         public delegate void OnCollectedMoneyDelegate();
         public event OnCollectedMoneyDelegate OnCollectedMoney;
+
+        public delegate void OnMoneyChangedDelegate(int currentMoney);
+        public event OnMoneyChangedDelegate OnMoneyChanged;
 
 
 
@@ -88,6 +96,9 @@ namespace YU.Template
 
         public delegate void OnHealthChangedDelegate(float currentHealth, float maxHealth);
         public event OnHealthChangedDelegate OnHealthChanged;
+
+        public delegate void   OnEnableNextLevelDelegate ();
+        public event OnEnableNextLevelDelegate OnEnableNextLevel;
        
 
         private bool isLevelEnded;
@@ -184,11 +195,11 @@ namespace YU.Template
         //___________________________________________________________________________________________________
 
 
-        public void ChangeLevelProgressValue(float fMin, float fMax, float fVal)
+        public void ChangeLevelProgressValue(float fCur, float fMax)
         {
             //Debug.Log("<color='purple'>LevelProgressValueChanged</color> " + fMin + " " + fMax + " " + fVal);
 
-            OnLevelProgressValueChanged?.Invoke(fMin, fMax, fVal);
+            OnLevelProgressValueChanged?.Invoke(fCur, fMax);
         }
 
         //___________________________________________________________________________________________________
@@ -199,6 +210,13 @@ namespace YU.Template
             //Debug.Log("<color='purple'>ScoreValueChanged</color>");
 
             OnScoreValueUpdated?.Invoke();
+        }
+
+         //___________________________________________________________________________________________________
+
+        public void PlaneTakingOff()
+        {
+            OnPlaneTakingOff?.Invoke();
         }
 
         //___________________________________________________________________________________________________
@@ -224,9 +242,9 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        public void DropBombs(int detectedEnemyCount)
+        public void DropBombs(GameObject enemy,bool bIsObjectEnemy)
         {
-            OnDropBombs?.Invoke(detectedEnemyCount);
+            OnDropBombs?.Invoke(enemy, bIsObjectEnemy);
         }
 
         //___________________________________________________________________________________________________
@@ -240,6 +258,11 @@ namespace YU.Template
         public void CollectedMoney()
         {
             OnCollectedMoney?.Invoke();
+        }
+
+        public void MoneyChanged(int currentMoney)
+        {
+            OnMoneyChanged?.Invoke(currentMoney);
         }
 
         //___________________________________________________________________________________________________
@@ -272,7 +295,7 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        public void ArmorUpgraded(int newArmor)
+        public void ArmorUpgraded(float newArmor)
         {
             OnArmorUpgraded?.Invoke(newArmor);
         }
@@ -296,6 +319,13 @@ namespace YU.Template
         public void HealthChanged(float currentHealth, float maxHealth)
         {
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        }
+
+         //___________________________________________________________________________________________________
+        
+        public void EnableNextLevel()
+        {
+            OnEnableNextLevel?.Invoke();
         }
     }
 }

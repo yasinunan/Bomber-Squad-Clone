@@ -16,6 +16,8 @@ namespace YU.Template
         {
             LevelManager.Instance.controller.OnRevertCrosshairVisibility += OnRevertCrosshairVisibility;
             LevelManager.Instance.controller.OnChangeCrosshairMaterial += OnChangeCrosshairMaterial;
+            
+            GameEngine.Instance.OnPrepareNewGame += OnPrepareNewGame;
         }
 
         //___________________________________________________________________________________________________
@@ -24,6 +26,8 @@ namespace YU.Template
         {
             LevelManager.Instance.controller.OnRevertCrosshairVisibility -= OnRevertCrosshairVisibility;
             LevelManager.Instance.controller.OnChangeCrosshairMaterial -= OnChangeCrosshairMaterial;
+            
+            GameEngine.Instance.OnPrepareNewGame -= OnPrepareNewGame;
         }
 
         //___________________________________________________________________________________________________
@@ -52,7 +56,10 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-
+        private void OnPrepareNewGame(bool bIsRematch)
+        {
+            spriteRenderer.enabled = false;
+        }
 
     }
 }

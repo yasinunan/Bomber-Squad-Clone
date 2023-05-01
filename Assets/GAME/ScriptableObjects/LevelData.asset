@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce2219283c6ab2045a698769a0021ac4, type: 3}
-  m_Name: EnemyTypeOne
+  m_Script: {fileID: 11500000, guid: f79f10e93da4d0c41a3659487a2d26a6, type: 3}
+  m_Name: LevelData
   m_EditorClassIdentifier: 
-  maxHealth: 1
-  damage: 1
-  fireTimeRate: 0.3
-  moneyPrefabCount: 1
-  attackRange: 5
+  moneyIncreaseAmount: 5
+  maxHealth: 100

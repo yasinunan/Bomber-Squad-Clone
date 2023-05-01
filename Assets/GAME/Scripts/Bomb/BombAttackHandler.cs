@@ -8,7 +8,7 @@ namespace YU.Template
     public class BombAttackHandler : MonoBehaviour
     {
 
-        private const string BOMB_TO_DROP = "bombToDrop";
+        private const string BOMB_TO_DROP = "Bomb";
 
         [Space]
 
@@ -16,9 +16,13 @@ namespace YU.Template
 
         [Space]
 
+        [SerializeField] private float attackDuration = 1.1f;
+        [SerializeField] private float shootingTime;
         [SerializeField] private bool isAttacking = false;
+        [SerializeField] private bool canAttack = false;
+        [SerializeField] private bool attackStarted = false;
 
-        private Coroutine coroutine;
+        private Coroutine coroutine, stopCoroutine;
 
         //___________________________________________________________________________________________________
 
@@ -38,65 +42,67 @@ namespace YU.Template
 
         void Start()
         {
-
+            coroutine = null;
+            stopCoroutine = null;
         }
 
         //___________________________________________________________________________________________________
+        void Update()
+        {
+            if (!GameEngine.Instance.IsPlaying())
+            {
+                return;
+            }
 
-        private IEnumerator DropBomb()
+            if (Time.time > shootingTime)
+            {
+                if (isAttacking)
+                {
+                    Debug.Log("DROPPING BOMB");
+     
+                    GameObject bomb = PoolingManager.Instance.GetPooledObject(BOMB_TO_DROP);
+
+                    bomb.transform.position = this.transform.position;
+                    bomb.gameObject.SetActive(true);
+                    if(bomb.TryGetComponent<Bomb>(out Bomb _bomb))
+                    {
+                        _bomb.Interact();
+                    }
+
+                    LevelManager.Instance.controller.BombDropped();
+                }
+                shootingTime = Time.time + dropTimeRate;
+
+            }
+        }
+
+
+        //___________________________________________________________________________________________________
+
+        private IEnumerator StopAttack()
         {
             if (!GameEngine.Instance.IsPlaying())
             {
                 yield break;
             }
 
-            while (true)
-            {
-                if (isAttacking)
-                {
+            yield return new WaitForSeconds(attackDuration);
 
-                    Debug.Log("DROPPING BOMB");
-                    // getting a bomb object from pooling manager
-                    GameObject bomb = PoolingManager.Instance.GetPooledObject(BOMB_TO_DROP);
-
-                    bomb.transform.position = this.transform.position;
-                    bomb.gameObject.SetActive(true);
-
-                    LevelManager .Instance.controller.BombDropped();
-
-                    yield return new WaitForSeconds(dropTimeRate);
-                }
-                else
-                {
-                    yield return new WaitForSeconds(dropTimeRate);
-                }
-            }
+            isAttacking = false;
         }
+
 
         //___________________________________________________________________________________________________
 
-        private void OnDropBombs(int detectedEnemyCount)
+        private void OnDropBombs(GameObject enemy, bool bIsObjectEnemy)
         {
-           // Debug.Log("bomb event triggered");
-            if (LevelManager.Instance.datas.HasEnoughBombs())
+            // Debug.Log("bomb event triggered");
+            if (LevelManager.Instance.datas.HasEnoughBombs() && bIsObjectEnemy)
             {
-                
-                if (detectedEnemyCount > 0)
+                if (!isAttacking)
                 {
-                    if (!isAttacking)
-                    {
-                        isAttacking = true;
-
-                        if (coroutine == null)
-                        {
-                            coroutine = StartCoroutine(DropBomb());
-                        }
-                    }
-                }
-                else
-                {
-                    isAttacking = false;
-
+                    isAttacking = true;
+                    StartCoroutine(StopAttack());
                 }
             }
         }
