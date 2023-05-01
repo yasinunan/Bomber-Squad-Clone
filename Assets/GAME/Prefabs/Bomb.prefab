@@ -72,7 +72,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1056904543853562, guid: 4cf45cdce36e66e4a93614abb5ae7821, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4020996693717984, guid: 4cf45cdce36e66e4a93614abb5ae7821, type: 3}
       propertyPath: m_RootOrder
@@ -294,6 +294,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WFXMR_ExplosiveSmoke Big Alt
       objectReference: {fileID: 0}
+    - target: {fileID: 100010, guid: d609d5ebc845aca409f72e9c6a56dc60, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: d609d5ebc845aca409f72e9c6a56dc60, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -355,6 +359,10 @@ PrefabInstance:
     - target: {fileID: 100006, guid: 808e73d863fcde3499fd5301563ffd3d, type: 3}
       propertyPath: m_Name
       value: WFXMR_ExplosiveSmokeGround
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 808e73d863fcde3499fd5301563ffd3d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 808e73d863fcde3499fd5301563ffd3d, type: 3}
       propertyPath: m_RootOrder

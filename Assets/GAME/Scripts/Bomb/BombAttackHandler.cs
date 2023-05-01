@@ -19,10 +19,7 @@ namespace YU.Template
         [SerializeField] private float attackDuration = 1.1f;
         [SerializeField] private float shootingTime;
         [SerializeField] private bool isAttacking = false;
-        [SerializeField] private bool canAttack = false;
-        [SerializeField] private bool attackStarted = false;
 
-        private Coroutine coroutine, stopCoroutine;
 
         //___________________________________________________________________________________________________
 
@@ -38,13 +35,7 @@ namespace YU.Template
             LevelManager.Instance.controller.OnDropBombs -= OnDropBombs;
         }
 
-        //___________________________________________________________________________________________________
-
-        void Start()
-        {
-            coroutine = null;
-            stopCoroutine = null;
-        }
+    
 
         //___________________________________________________________________________________________________
         void Update()

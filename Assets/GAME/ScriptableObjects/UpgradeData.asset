@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: UpgradeData
   m_EditorClassIdentifier: 
   maxUpgradeCount: 10
-  nextUpgradePriceIncreaseAmount: 1
-  bombCapacityIncreaseAmount: 2
+  nextUpgradePriceIncreaseAmount: 40
+  bombCapacityIncreaseAmount: 3
   damageIncreaseAmount: 0.05
   armorIncreaseAmount: 0.05
   initialBombCapacity: 30

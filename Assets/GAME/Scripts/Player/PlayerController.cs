@@ -20,7 +20,7 @@ namespace YU.Template
         private int nLayerAttackable;
         private int nLayerMoney;
 
-        [SerializeField] private Animator planeAnimator;
+        // [SerializeField] private Animator planeAnimator;
         [SerializeField] private VariableJoystick variableJoystick;
         [SerializeField] private Transform airfieldStartPoint, airfieldEndPoint;
         [SerializeField] private ParticleSystem upgradeParticle;
@@ -45,10 +45,9 @@ namespace YU.Template
         [SerializeField] private bool canFly = false;
         [SerializeField] private bool isFlying = false;
         [SerializeField] private bool isLanding = false;
-        [SerializeField] private bool droppedBomb = false;
 
-        private bool isThereEnemyUnderMe = false;
-        private bool crossHeadIsRed = false;
+
+
 
         private int _detectedEnemyCount;
         private int detectedEnemyCount
@@ -59,15 +58,13 @@ namespace YU.Template
                 if (value != _detectedEnemyCount && value > 0)
                 {
                     _detectedEnemyCount = value;
-                    crossHeadIsRed = true;
+
                     LevelManager.Instance.controller.ChangeCrosshairMaterial(1);
                 }
                 else if (value == 0 && value != _detectedEnemyCount)
                 {
                     _detectedEnemyCount = value;
                     LevelManager.Instance.controller.ChangeCrosshairMaterial(0);
-                    crossHeadIsRed = true;
-                    droppedBomb = false;
                 }
             }
         }
@@ -150,7 +147,7 @@ namespace YU.Template
                         detectedEnemy++;
                         LevelManager.Instance.controller.DropBombs(hitColliders[i].gameObject, true);
                     }
-                    else if(hitColliders[i].gameObject.layer.Equals(nLayerMoney))
+                    else if (hitColliders[i].gameObject.layer.Equals(nLayerMoney))
                     {
                         LevelManager.Instance.controller.DropBombs(hitColliders[i].gameObject, false);
                     }

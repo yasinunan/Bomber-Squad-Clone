@@ -49,7 +49,7 @@ namespace YU.Template
             controller.OnLevelCompleted += OnLevelCompleted;
             controller.OnLevelDraw += OnLevelDraw;
             controller.OnLevelChanged += OnLevelChanged;
-       
+
         }
 
         //___________________________________________________________________________________________________
@@ -149,8 +149,8 @@ namespace YU.Template
         {
             datas.isLevelFinished = true;
 
-           // datas.SetMoney(0);
-           controller.UpdateScoreValue();
+            // datas.SetMoney(0);
+            controller.UpdateScoreValue();
 
 
             GameEngine.Instance.FinishGame(false);
@@ -266,7 +266,7 @@ namespace YU.Template
         void CreateLevelObjects()
         {
 
-            // HeyGamesHelper.Instance.SpawnNewLevel();
+            LevelSpawner.Instance.SpawnNewLevel();
         }
     }
 }

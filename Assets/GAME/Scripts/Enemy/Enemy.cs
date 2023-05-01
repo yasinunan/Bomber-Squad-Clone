@@ -5,7 +5,7 @@ using DG.Tweening;
 
 namespace YU.Template
 {
-    public class Enemy : MonoBehaviour,  IDamagable
+    public class Enemy : MonoBehaviour, IDamagable
     {
         private const string MONEY = "Money";
         private const string BULLET = "Bullet";
@@ -14,7 +14,7 @@ namespace YU.Template
         [SerializeField] private EnemySO data;
         [SerializeField] private ParticleSystem particle;
 
-        [SerializeField] private MeshRenderer meshRenderer;
+        [SerializeField] private Renderer skinnedMeshRenderer;
 
         [SerializeField] private float currentHealth;
         [SerializeField] private float damage;
@@ -34,7 +34,7 @@ namespace YU.Template
         private void Awake()
         {
             player = GameObject.Find("Player");
-            meshRenderer = GetComponentInChildren<MeshRenderer>();
+            skinnedMeshRenderer = GetComponentInChildren<Renderer>();
 
             currentHealth = data.maxHealth;
             damage = data.damage;
@@ -47,6 +47,19 @@ namespace YU.Template
 
         private void Start()
         {
+
+        }
+
+        //___________________________________________________________________________________________________
+
+        void OnEnable()
+        {
+            LevelManager.Instance.controller.OnDropBombs += OnDropBombs;
+        }
+
+        void OnDisable()
+        {
+            LevelManager.Instance.controller.OnDropBombs -= OnDropBombs;
 
         }
 
@@ -107,11 +120,11 @@ namespace YU.Template
             {
                 currentHealth = 0f;
 
-                meshRenderer.enabled = false;
+                skinnedMeshRenderer.enabled = false;
                 for (int i = 0; i < moneyPrefabCount; i++)
                 {
                     Vector2 v2RandomPoint = Random.insideUnitCircle * circleRadiusToDropMoney;
-                    Vector3 v3RandomPoint = transform.position + new Vector3(v2RandomPoint.x, -0.1f, v2RandomPoint.y);
+                    Vector3 v3RandomPoint = transform.position + new Vector3(v2RandomPoint.x, 0f, v2RandomPoint.y);
 
                     GameObject money = PoolingManager.Instance.GetPooledObject(MONEY);
                     money.transform.position = transform.position;
@@ -173,9 +186,9 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        private void OnDropBombs(GameObject enemy)
+        private void OnDropBombs(GameObject enemy, bool isObjectEnemy)
         {
-            if(ReferenceEquals(this.gameObject,enemy))
+            if (isObjectEnemy && ReferenceEquals(this.gameObject, enemy))
             {
                 Interact();
             }

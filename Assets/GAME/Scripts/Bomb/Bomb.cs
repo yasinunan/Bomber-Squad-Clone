@@ -21,6 +21,10 @@ namespace YU.Template
 
         Collider[] hitColliders;
 
+        void Awake()
+        {
+            _renderer = GetComponentInChildren<MeshRenderer>();
+        }
 
 
 

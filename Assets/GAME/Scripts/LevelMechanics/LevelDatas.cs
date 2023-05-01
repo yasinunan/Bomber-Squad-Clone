@@ -39,7 +39,8 @@ namespace YU.Template
         {
             ResetValues(true);
 
-            InventoryManager.Instance.SetBombsCount(30);
+           // InventoryManager.Instance.SetBombsCount(30);
+            FindEnemies();
         }
 
         //___________________________________________________________________________________________________
