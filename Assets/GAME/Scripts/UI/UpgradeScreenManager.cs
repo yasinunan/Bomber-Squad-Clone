@@ -34,13 +34,13 @@ namespace YU.Template
             nextLevelButton.image.color = Color.white;
 
             int tempCapacity = InventoryManager.Instance.GetBombsCount();
-            if (tempCapacity ==  0)
+            if (tempCapacity == 0)
             {
                 InventoryManager.Instance.SetBombsCount(upgradeData.initialBombCapacity);
             }
 
             float tempArmor = InventoryManager.Instance.GetArmor();
-            if (tempArmor   == 0f)
+            if (tempArmor == 0f)
             {
                 InventoryManager.Instance.SetArmor(upgradeData.initialArmor);
             }
@@ -160,6 +160,9 @@ namespace YU.Template
             LevelManager.Instance.controller.BombCapacityUpgraded(bombsCount + upgradeData.bombCapacityIncreaseAmount);
 
             PrepareCapacityUpgrade();
+            PrepareArmorUpgrade();
+            PrepareDamageUpgrade();
+
         }
 
         //___________________________________________________________________________________________________
@@ -183,6 +186,9 @@ namespace YU.Template
             LevelManager.Instance.controller.ArmorUpgraded(armor + upgradeData.armorIncreaseAmount);
 
             PrepareArmorUpgrade();
+            PrepareCapacityUpgrade();
+            PrepareDamageUpgrade();
+
         }
 
 
@@ -207,6 +213,8 @@ namespace YU.Template
             LevelManager.Instance.controller.DamageUpgraded(damage + upgradeData.damageIncreaseAmount);
 
             PrepareDamageUpgrade();
+            PrepareArmorUpgrade();
+            PrepareCapacityUpgrade();
         }
 
         //___________________________________________________________________________________________________
