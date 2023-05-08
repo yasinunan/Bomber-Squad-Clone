@@ -46,11 +46,15 @@ namespace YU.Template
             if (tempArmor == 0f)
             {
                 InventoryManager.Instance.SetArmor(upgradeData.initialArmor);
+                float armor = InventoryManager.Instance.GetArmor();
+                LevelManager.Instance.controller.ArmorUpgraded(armor);
             }
             float tempDamage = InventoryManager.Instance.GetDamage();
             if (tempDamage == 0f)
             {
                 InventoryManager.Instance.SetDamage(upgradeData.initialDamage);
+                float damage = InventoryManager.Instance.GetDamage();
+                LevelManager.Instance.controller.DamageUpgraded(damage);
             }
         }
 

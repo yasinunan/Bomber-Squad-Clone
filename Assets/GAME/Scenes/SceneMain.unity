@@ -5924,6 +5924,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e548505f9a75c2b48968a2758a857dce, type: 3}
+--- !u!198 &1728091936 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2682689601501671027, guid: e548505f9a75c2b48968a2758a857dce, type: 3}
+  m_PrefabInstance: {fileID: 1728091935}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1730654355
 GameObject:
   m_ObjectHideFlags: 0
@@ -6891,7 +6896,7 @@ MonoBehaviour:
   variableJoystick: {fileID: 432533211}
   airfieldStartPoint: {fileID: 473192962}
   airfieldEndPoint: {fileID: 223825373}
-  upgradeParticle: {fileID: 0}
+  upgradeParticle: {fileID: 1728091936}
   attackableLayerMask:
     serializedVersion: 2
     m_Bits: 768
