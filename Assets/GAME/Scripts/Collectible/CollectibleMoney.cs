@@ -5,7 +5,7 @@ using DG.Tweening;
 
 namespace YU.Template
 {
-    public class CollectibleMoney : MonoBehaviour, IInteractable
+    public class CollectibleMoney : MonoBehaviour
     {
         [SerializeField] private GameObject player;
         [SerializeField] private float animDuration = 0.5f;
@@ -39,7 +39,7 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        public void Interact()
+        public void GetCollected()
         {
             if (!didInteract)
             {
@@ -64,7 +64,7 @@ namespace YU.Template
             {
                 if(ReferenceEquals(enemy, this.gameObject))
                 {
-                    Interact();
+                    GetCollected();
                 }
             }
         }

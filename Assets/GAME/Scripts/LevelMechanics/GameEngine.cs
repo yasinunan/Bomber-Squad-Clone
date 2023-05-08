@@ -59,7 +59,7 @@ namespace YU.Template
 
         private void Awake()
         {
-            Application.targetFrameRate = 60;
+            //Application.targetFrameRate = 60;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
         }
 

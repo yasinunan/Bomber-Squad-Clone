@@ -32,8 +32,16 @@ namespace YU.Template
 
         private void FixedUpdate()
         {
+            if (!GameEngine.Instance.IsPlaying())
+            {
+                return;
+            }
 
-            if (canExplode)
+            if (!canExplode)
+            {
+                return;
+            }
+            else
             {
                 canExplode = false;
 

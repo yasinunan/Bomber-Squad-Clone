@@ -39,8 +39,8 @@ namespace YU.Template
         {
             ResetValues(true);
 
-           // InventoryManager.Instance.SetBombsCount(30);
-            FindEnemies();
+            // InventoryManager.Instance.SetBombsCount(30);
+          //  FindEnemies();
         }
 
         //___________________________________________________________________________________________________
@@ -181,8 +181,9 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        private void FindEnemies()
+        private IEnumerator FindEnemies()
         {
+            yield return new WaitForEndOfFrame();
             if (EnemyList.Count > 0)
             {
                 EnemyList.Clear();
@@ -294,7 +295,7 @@ namespace YU.Template
         void OnPrepareNewGame(bool bIsRematch = false)
         {
             ResetValues(!bIsRematch);
-            FindEnemies();
+            StartCoroutine(FindEnemies());
         }
 
         //___________________________________________________________________________________________________

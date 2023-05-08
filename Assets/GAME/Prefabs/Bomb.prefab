@@ -55,7 +55,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   dropHeight: 3
-  dropDuraiton: 0.6
+  dropDuraiton: 0.8
   sphereCastRadius: 0.5
   damage: 2
   canExplode: 0

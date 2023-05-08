@@ -29,6 +29,9 @@ namespace YU.Template
             LevelManager.Instance.controller.OnHealthChanged += OnHealthChanged;
             LevelManager.Instance.controller.OnRevertCrosshairVisibility += OnRevertHealthBarVisibility;
 
+            GameEngine.Instance.OnPrepareNewGame += OnPrepareNewGame;
+
+
         }
 
         //___________________________________________________________________________________________________
@@ -38,7 +41,7 @@ namespace YU.Template
             LevelManager.Instance.controller.OnHealthChanged -= OnHealthChanged;
             LevelManager.Instance.controller.OnRevertCrosshairVisibility -= OnRevertHealthBarVisibility;
 
-
+            GameEngine.Instance.OnPrepareNewGame -= OnPrepareNewGame;
         }
 
         //___________________________________________________________________________________________________
@@ -104,6 +107,16 @@ namespace YU.Template
             canvasGroup.alpha = isVisible ? 1 : 0;
         }
 
+        //___________________________________________________________________________________________________
 
+        private void OnPrepareNewGame(bool bIsRematch)
+        {
+            canvasGroup.alpha = 0;
+            isVisible = false;
+        }
+
+        //___________________________________________________________________________________________________
+
+     
     }
 }

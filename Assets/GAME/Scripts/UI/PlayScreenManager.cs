@@ -19,6 +19,8 @@ namespace YU.Template
             LevelManager.Instance.controller.OnBombAmountChanged += OnBombAmountChanged;
             LevelManager.Instance.controller.OnMoneyChanged += OnMoneyChanged;
             LevelManager.Instance.controller.OnLevelProgressValueChanged += OnLevelProgressValueChanged;
+
+            GameEngine.Instance.OnPrepareNewGame += OnPrepareNewGame;
         }
 
         //___________________________________________________________________________________________________
@@ -28,22 +30,14 @@ namespace YU.Template
             LevelManager.Instance.controller.OnBombAmountChanged -= OnBombAmountChanged;
             LevelManager.Instance.controller.OnMoneyChanged -= OnMoneyChanged;
             LevelManager.Instance.controller.OnLevelProgressValueChanged -= OnLevelProgressValueChanged;
+
+            GameEngine.Instance.OnPrepareNewGame -= OnPrepareNewGame;
         }
 
         //___________________________________________________________________________________________________
 
 
-        void Start()
-        {
-
-        }
-
-        //___________________________________________________________________________________________________
-
-        void Update()
-        {
-
-        }
+      
 
         private void SetProgressBar(float currentHealth, float maxHealth)
         {
@@ -89,9 +83,18 @@ namespace YU.Template
 
         }
 
+        //___________________________________________________________________________________________________
+
         private void OnLevelProgressValueChanged(float current, float max)
         {
             SetProgressBar(current, max);
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void OnPrepareNewGame(bool bIsRematch)
+        {
+             levelProgressImage.fillAmount = 0f;
         }
     }
 
