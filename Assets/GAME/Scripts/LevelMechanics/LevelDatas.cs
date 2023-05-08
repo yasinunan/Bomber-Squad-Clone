@@ -37,10 +37,10 @@ namespace YU.Template
 
         void Start()
         {
-            ResetValues(true);
+            // ResetValues(true);
 
             // InventoryManager.Instance.SetBombsCount(30);
-          //  FindEnemies();
+            //  FindEnemies();
         }
 
         //___________________________________________________________________________________________________
@@ -114,11 +114,7 @@ namespace YU.Template
         void ResetValues(bool bIncreaseLevel = false)
         {
             bombAmount = InventoryManager.Instance.GetBombsCount();
-            if (bombAmount < 1)
-            {
-                bombAmount = defaultBombAmount; ;
-                InventoryManager.Instance.SetBombsCount(bombAmount);
-            }
+
             currentBombAmount = bombAmount;
             LevelManager.Instance.controller.BombAmountChanged(currentBombAmount, bombAmount);
 

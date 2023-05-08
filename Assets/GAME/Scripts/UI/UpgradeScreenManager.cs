@@ -36,7 +36,10 @@ namespace YU.Template
             int tempCapacity = InventoryManager.Instance.GetBombsCount();
             if (tempCapacity == 0)
             {
+
                 InventoryManager.Instance.SetBombsCount(upgradeData.initialBombCapacity);
+                int bombsCount = InventoryManager.Instance.GetBombsCount();
+                LevelManager.Instance.controller.BombCapacityUpgraded(bombsCount);
             }
 
             float tempArmor = InventoryManager.Instance.GetArmor();

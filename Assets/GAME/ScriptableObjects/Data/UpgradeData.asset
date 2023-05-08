@@ -17,6 +17,6 @@ MonoBehaviour:
   bombCapacityIncreaseAmount: 3
   damageIncreaseAmount: 0.05
   armorIncreaseAmount: 0.05
-  initialBombCapacity: 30
+  initialBombCapacity: 20
   initialDamage: 3
   initialArmor: 0
