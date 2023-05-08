@@ -23,6 +23,7 @@ namespace YU.Template
         // [SerializeField] private Animator planeAnimator;
         [SerializeField] private VariableJoystick variableJoystick;
         [SerializeField] private Transform airfieldStartPoint, airfieldEndPoint;
+        [SerializeField] private Transform visuals;
         [SerializeField] private ParticleSystem upgradeParticle;
 
         [Space]
@@ -39,6 +40,9 @@ namespace YU.Template
         [SerializeField] private float raycastDistance = 2f;
         [SerializeField] private float rotationSpeed = 720f;
         [SerializeField] private float takeOffDuration = 0.5f;
+        [SerializeField] private float maxRollAngle = 30f;
+        [SerializeField] private float smoothness = 10f;
+
 
         [Space]
 
@@ -188,6 +192,7 @@ namespace YU.Template
             if (canFly)
             {
                 PlaneMovement(moveDirection);
+                ApplyRollingAnimation(moveDirection);
             }
         }
 
@@ -213,6 +218,18 @@ namespace YU.Template
                 Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
             }
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void ApplyRollingAnimation(Vector3 moveDir)
+        {
+            // Calculate the roll angle based on the input direction
+            float rollAngle = -Mathf.Clamp(moveDir.x, -1f, 1f) * maxRollAngle;
+
+            // Apply the roll animation to the visuals GameObject
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, rollAngle);
+            visuals.localRotation = Quaternion.Lerp(visuals.localRotation, targetRotation, Time.deltaTime * smoothness);
         }
 
         //___________________________________________________________________________________________________
@@ -244,10 +261,16 @@ namespace YU.Template
 
         private void LandThePlane()
         {
+
+
             float fTime = Vector3.Distance(transform.position, airfieldEndPoint.position) / flySpeed;
 
             transform.DOMove(airfieldEndPoint.position, fTime).OnComplete(() =>
             {
+
+                Quaternion targetRotation = Quaternion.Euler(Vector3.zero);
+                visuals.localRotation = targetRotation;
+
                 transform.DORotate(new Vector3(45f, 180f, 0f), takeOffDuration * 2f).OnComplete(() =>
                 {
                     transform.DORotate(Vector3.zero, takeOffDuration * 2f).OnComplete(() =>
