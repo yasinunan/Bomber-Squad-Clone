@@ -1,8 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
+
 
 namespace YU.Template
 {
@@ -25,13 +24,10 @@ namespace YU.Template
 
         void OnEnable()
         {
-
             LevelManager.Instance.controller.OnHealthChanged += OnHealthChanged;
             LevelManager.Instance.controller.OnRevertCrosshairVisibility += OnRevertHealthBarVisibility;
 
             GameEngine.Instance.OnPrepareNewGame += OnPrepareNewGame;
-
-
         }
 
         //___________________________________________________________________________________________________
@@ -46,33 +42,27 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-
         void LateUpdate()
         {
-
             canvasGroup.transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
-
         }
 
         //___________________________________________________________________________________________________
 
         private void SetProgressBar(float currentHealth, float maxHealth)
         {
-
             //healthBar.fillAmount = currentHealth / maxHealth;
             if (healthBarCoroutine != null)
             {
                 StopCoroutine(healthBarCoroutine);
             }
             healthBarCoroutine = StartCoroutine(ChangeImageFil(healthBar, currentHealth / maxHealth));
-
         }
 
         //___________________________________________________________________________________________________
 
         public void ResetProgressBar()
         {
-
             healthBar.fillAmount = 1f;
         }
 

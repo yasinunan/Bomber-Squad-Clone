@@ -116,9 +116,12 @@ namespace YU.Template
             //Debug.Log(damage);
             currentHealth -= damage;
 
-            if (currentHealth <= 0f)
+
+            if (currentHealth <= 0f && !isDestroyed)
             {
+                isDestroyed = true;
                 currentHealth = 0f;
+
 
                 skinnedMeshRenderer.enabled = false;
                 for (int i = 0; i < moneyPrefabCount; i++)
@@ -129,16 +132,11 @@ namespace YU.Template
                     GameObject money = PoolingManager.Instance.GetPooledObject(MONEY);
                     money.transform.position = transform.position;
                     money.SetActive(true);
-                    money.transform.DOMove(v3RandomPoint, duration).SetEase(Ease.OutQuint).OnComplete(() =>
-                    {
-                        if (!isDestroyed)
-                        {
-                            isDestroyed = true;
-                            LevelManager.Instance.controller.DestroyedEnemy();
-                            this.gameObject.SetActive(false);
-                        }
-                    });
+                    money.transform.DOMove(v3RandomPoint, duration).SetEase(Ease.OutQuint);
                 }
+
+                LevelManager.Instance.controller.DestroyedEnemy();
+                this.gameObject.SetActive(false);
             }
         }
 

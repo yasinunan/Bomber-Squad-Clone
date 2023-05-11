@@ -317,6 +317,9 @@ namespace YU.Template
             isLanding = false;
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
+            visuals.transform.localRotation = Quaternion.identity;
+
+
         }
 
         //___________________________________________________________________________________________________

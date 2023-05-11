@@ -231,7 +231,7 @@ namespace YU.Template
 
         void ClearPreviousLevelObjects()
         {
-            // PoolingManager.Instance.ReleaseAllPooledObjects();
+             PoolingManager.Instance.ReleaseAllPooledObjects();
 
             // clear prev. level environment
             if (levelEnvironmentHolder != null)
