@@ -23,8 +23,9 @@ namespace YU.Template
         [SerializeField] private float circleRadiusToDropMoney = 1.5f;
         [SerializeField] private float duration = 0.6f;
         [SerializeField] private float attackRange;
-
+        [SerializeField] private float rotationSpeed = 360f;
         [SerializeField] private float attackDuration;
+
         private float shootingTime;
 
         private bool isAttacking = false;
@@ -74,6 +75,7 @@ namespace YU.Template
 
             if (isAttacking)
             {
+                LookAtTarget();
 
                 if (Time.time > shootingTime)
                 {
@@ -81,8 +83,6 @@ namespace YU.Template
 
                     if (isPlayerInRange())
                     {
-                        particle.transform.LookAt(player.transform);
-
                         TriggerDamageEvent();
                         PlayParticle();
                     }
@@ -92,8 +92,11 @@ namespace YU.Template
                     /*GameObject bullet = PoolingManager.Instance.GetPooledObject(BULLET);
                     bullet.transform.position = transform.position;
                     bullet.SetActive(true);*/
-
                 }
+            }
+            else
+            {
+                StopParticle();
             }
         }
 
@@ -107,6 +110,17 @@ namespace YU.Template
                 isAttacking = true;
                 StartCoroutine(StopAttack());
             }
+        }
+
+        //___________________________________________________________________________________________________
+
+        private void LookAtTarget()
+        {
+            particle.transform.LookAt(player.transform);
+
+
+            Vector3 playerPos = new Vector3(player.transform.position.x, 0f, player.transform.position.z);
+            transform.LookAt(playerPos);
         }
 
         //___________________________________________________________________________________________________
@@ -179,6 +193,16 @@ namespace YU.Template
             if (particle != null && particle.isPlaying == false)
             {
                 particle.Play();
+            }
+        }
+
+         //___________________________________________________________________________________________________
+
+        private void StopParticle()
+        {
+            if (particle != null && particle.isPlaying)
+            {
+                particle.Stop();
             }
         }
 

@@ -72,6 +72,7 @@ MonoBehaviour:
   circleRadiusToDropMoney: 1.5
   duration: 0.6
   attackRange: 0
+  rotationSpeed: 2000
   attackDuration: 2
 --- !u!114 &-743779933817381663
 MonoBehaviour:
@@ -247,7 +248,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4840268657495176, guid: c0507a544f1ee7e4caa7785ef90ff92a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.99
+      value: 0.851
       objectReference: {fileID: 0}
     - target: {fileID: 4840268657495176, guid: c0507a544f1ee7e4caa7785ef90ff92a, type: 3}
       propertyPath: m_LocalRotation.w

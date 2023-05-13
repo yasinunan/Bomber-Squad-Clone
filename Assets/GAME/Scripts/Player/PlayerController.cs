@@ -225,7 +225,7 @@ namespace YU.Template
         private void ApplyRollingAnimation(Vector3 moveDir)
         {
             // Calculate the roll angle based on the input direction
-            float rollAngle = -Mathf.Clamp(moveDir.x, -1f, 1f) * maxRollAngle;
+            float rollAngle = -Mathf.Clamp(moveDir.x+ moveDir.z, -1f, 1f) * maxRollAngle;
 
             // Apply the roll animation to the visuals GameObject
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, rollAngle);

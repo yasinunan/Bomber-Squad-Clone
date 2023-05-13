@@ -72,6 +72,7 @@ MonoBehaviour:
   circleRadiusToDropMoney: 1.5
   duration: 0.6
   attackRange: 0
+  rotationSpeed: 2000
   attackDuration: 2
 --- !u!114 &-2486557769475455351
 MonoBehaviour:

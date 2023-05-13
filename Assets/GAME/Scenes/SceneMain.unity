@@ -6959,7 +6959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dropTimeRate: 0.5
-  attackDuration: 0.7
+  attackDuration: 0.4
   shootingTime: 0.7
   isAttacking: 0
 --- !u!114 &1995552234
