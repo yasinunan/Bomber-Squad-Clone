@@ -1,13 +1,9 @@
 fileFormatVersion: 2
-guid: a5a8a9c041f49a24f9395a6c8af48500
+guid: a4fb02f16da8b804e8dd3a86d8ba6dfd
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - player: {instanceID: 0}
-  - data: {fileID: 11400000, guid: 59d2b1f3f84534c43bf96a96b894bd38, type: 2}
-  - particle: {instanceID: 0}
-  - meshRenderer: {instanceID: 0}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

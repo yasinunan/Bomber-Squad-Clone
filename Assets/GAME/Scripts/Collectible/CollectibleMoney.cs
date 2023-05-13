@@ -23,7 +23,7 @@ namespace YU.Template
 
         void OnEnable()
         {
-            LevelManager.Instance.controller.OnDropBombs += OnDropBombs;
+            LevelManager.Instance.controller.OnTargetDetected += OnTargetDetected;
 
         }
 
@@ -31,7 +31,7 @@ namespace YU.Template
 
         private void OnDisable()
         {
-            LevelManager.Instance.controller.OnDropBombs -= OnDropBombs;
+            LevelManager.Instance.controller.OnTargetDetected -= OnTargetDetected;
 
             transform.localScale = Vector3.one;
             didInteract = false;
@@ -58,7 +58,7 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        private void OnDropBombs(GameObject enemy, bool bIsObjectEnemy)
+        private void OnTargetDetected(GameObject enemy, bool bIsObjectEnemy)
         {
             if(!bIsObjectEnemy)
             {

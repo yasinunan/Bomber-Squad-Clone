@@ -58,8 +58,8 @@ namespace YU.Template
         public event OnChangeCrosshairMaterialDelegate OnChangeCrosshairMaterial;
 
 
-        public delegate void OnDropBombsDelegate(GameObject enemy, bool bIsObjectEnemy);
-        public event OnDropBombsDelegate OnDropBombs;
+        public delegate void OnTargetDetectedDelegate(GameObject enemy, bool bIsObjectEnemy);
+        public event OnTargetDetectedDelegate OnTargetDetected;
 
         public delegate void OnBombDroppedDelegate();
         public event OnBombDroppedDelegate OnBombDropped;
@@ -242,9 +242,9 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        public void DropBombs(GameObject enemy,bool bIsObjectEnemy)
+        public void TargetDetected(GameObject enemy,bool bIsObjectEnemy)
         {
-            OnDropBombs?.Invoke(enemy, bIsObjectEnemy);
+            OnTargetDetected?.Invoke(enemy, bIsObjectEnemy);
         }
 
         //___________________________________________________________________________________________________

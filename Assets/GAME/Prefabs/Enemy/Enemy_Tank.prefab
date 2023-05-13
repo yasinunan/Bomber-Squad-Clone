@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4003424316655834647}
   - component: {fileID: 4003424316655834646}
-  - component: {fileID: 4003424316655834643}
   - component: {fileID: -743779933817381663}
+  - component: {fileID: 5840678302287867238}
   m_Layer: 8
   m_Name: Enemy_Tank
   m_TagString: Enemy
@@ -49,31 +49,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.4774581, y: 1.1830078, z: 3.031973}
   m_Center: {x: 0.0055517554, y: 0.5442079, z: -0.061070442}
---- !u!114 &4003424316655834643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4003424316655835624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5a8a9c041f49a24f9395a6c8af48500, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  data: {fileID: 11400000, guid: c6095b14b8bb200499aa6c0a563b089e, type: 2}
-  particle: {fileID: 3841441750973945616}
-  skinnedMeshRenderer: {fileID: 0}
-  currentHealth: 1
-  damage: 1
-  fireTimeRate: 0
-  moneyPrefabCount: 0
-  circleRadiusToDropMoney: 1.5
-  duration: 0.6
-  attackRange: 0
-  rotationSpeed: 2000
-  attackDuration: 2
 --- !u!114 &-743779933817381663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,6 +66,31 @@ MonoBehaviour:
   needArrowIndicator: 1
   needDistanceText: 0
   indicator: {fileID: 0}
+--- !u!114 &5840678302287867238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003424316655835624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50f99315fd2c35940bb7456a0d64df0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  data: {fileID: 11400000, guid: c6095b14b8bb200499aa6c0a563b089e, type: 2}
+  particle: {fileID: 3841441750973945616}
+  skinnedMeshRenderer: {fileID: 414076858085879673}
+  currentHealth: 0
+  damage: 0
+  fireTimeRate: 0
+  moneyPrefabCount: 0
+  circleRadiusToDropMoney: 1.5
+  duration: 0.6
+  attackRange: 0
+  rotationSpeed: 360
+  attackDuration: 2
 --- !u!1001 &4003424314657203766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -451,6 +451,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 997823ade0e2fc249a876fa159f69cc3, type: 3}
+--- !u!23 &414076858085879673 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4950391379869278556, guid: 997823ade0e2fc249a876fa159f69cc3, type: 3}
+  m_PrefabInstance: {fileID: 4687202737042525733}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8563576364651819859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4024992501267447158, guid: 997823ade0e2fc249a876fa159f69cc3, type: 3}

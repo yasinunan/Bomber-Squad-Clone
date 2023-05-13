@@ -25,14 +25,14 @@ namespace YU.Template
 
         private void OnEnable()
         {
-            LevelManager.Instance.controller.OnDropBombs += OnDropBombs;
+            LevelManager.Instance.controller.OnTargetDetected += OnTargetDetected;
         }
 
         //___________________________________________________________________________________________________
 
         private void OnDisable()
         {
-            LevelManager.Instance.controller.OnDropBombs -= OnDropBombs;
+            LevelManager.Instance.controller.OnTargetDetected -= OnTargetDetected;
         }
 
     
@@ -85,7 +85,7 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        private void OnDropBombs(GameObject enemy, bool bIsObjectEnemy)
+        private void OnTargetDetected(GameObject enemy, bool bIsObjectEnemy)
         {
             // Debug.Log("bomb event triggered");
             if (LevelManager.Instance.datas.HasEnoughBombs() && bIsObjectEnemy)

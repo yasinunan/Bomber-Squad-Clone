@@ -149,11 +149,11 @@ namespace YU.Template
                     if (hitColliders[i].gameObject.layer.Equals(nLayerAttackable))
                     {
                         detectedEnemy++;
-                        LevelManager.Instance.controller.DropBombs(hitColliders[i].gameObject, true);
+                        LevelManager.Instance.controller.TargetDetected(hitColliders[i].gameObject, true);
                     }
                     else if (hitColliders[i].gameObject.layer.Equals(nLayerMoney))
                     {
-                        LevelManager.Instance.controller.DropBombs(hitColliders[i].gameObject, false);
+                        LevelManager.Instance.controller.TargetDetected(hitColliders[i].gameObject, false);
                     }
                 }
                 detectedEnemyCount = detectedEnemy;

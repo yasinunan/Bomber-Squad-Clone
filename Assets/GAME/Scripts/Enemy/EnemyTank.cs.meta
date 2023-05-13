@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 50f99315fd2c35940bb7456a0d64df0d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - player: {instanceID: 0}
+  - data: {fileID: 11400000, guid: 59d2b1f3f84534c43bf96a96b894bd38, type: 2}
+  - particle: {instanceID: 0}
+  - meshRenderer: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
