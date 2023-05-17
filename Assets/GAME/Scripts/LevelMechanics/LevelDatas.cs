@@ -10,7 +10,7 @@ namespace YU.Template
         //___________________________________________________________________________________________________
 
         [SerializeField] private LevelDataSO LevelData;
-        public List<GameObject> EnemyList = new List<GameObject>();
+        public List<Enemy> EnemyList = new List<Enemy>();
         public int levelNumber = 0;
         public bool isLevelFinished = false;
         [SerializeField] private int nMoney = 0;
@@ -183,11 +183,11 @@ namespace YU.Template
             if (EnemyList.Count > 0)
             {
                 EnemyList.Clear();
-                EnemyList.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
+                EnemyList.AddRange(FindObjectsOfType<Enemy>());
             }
             else
             {
-                EnemyList.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
+                EnemyList.AddRange(FindObjectsOfType<Enemy>());
             }
         }
 

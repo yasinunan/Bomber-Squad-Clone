@@ -53,11 +53,11 @@ namespace YU.Template
                 {
                     for (int i = 0; i < hitColliders.Length; i++)
                     {
-                        if (hitColliders[i].gameObject.TryGetComponent<Enemy>(out Enemy enemy))
+                        if (hitColliders[i].gameObject.TryGetComponent<IDamagable>(out IDamagable damagable))
                         {
 
 
-                            enemy.TakeDamage(damage);
+                            damagable.TakeDamage(damage);
                         }
 
                         if (i == hitColliders.Length - 1)
