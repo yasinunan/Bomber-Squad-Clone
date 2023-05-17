@@ -40,7 +40,7 @@ namespace YU.Template
         // Events
         //
 
-        
+
         public delegate void OnPlaneTakingOffDelegate();
         public event OnPlaneTakingOffDelegate OnPlaneTakingOff;
 
@@ -97,9 +97,12 @@ namespace YU.Template
         public delegate void OnHealthChangedDelegate(float currentHealth, float maxHealth);
         public event OnHealthChangedDelegate OnHealthChanged;
 
-        public delegate void   OnEnableNextLevelDelegate ();
+        public delegate void OnEnableNextLevelDelegate();
         public event OnEnableNextLevelDelegate OnEnableNextLevel;
-       
+
+
+        public delegate void OnCrashPlaneDelegate();
+        public event OnCrashPlaneDelegate OnCrashPlane;
 
         private bool isLevelEnded;
 
@@ -212,7 +215,7 @@ namespace YU.Template
             OnScoreValueUpdated?.Invoke();
         }
 
-         //___________________________________________________________________________________________________
+        //___________________________________________________________________________________________________
 
         public void PlaneTakingOff()
         {
@@ -242,7 +245,7 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-        public void TargetDetected(GameObject enemy,bool bIsObjectEnemy)
+        public void TargetDetected(GameObject enemy, bool bIsObjectEnemy)
         {
             OnTargetDetected?.Invoke(enemy, bIsObjectEnemy);
         }
@@ -314,18 +317,25 @@ namespace YU.Template
             OnEnemyAttack?.Invoke(damage);
         }
 
-         //___________________________________________________________________________________________________
+        //___________________________________________________________________________________________________
 
         public void HealthChanged(float currentHealth, float maxHealth)
         {
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
         }
 
-         //___________________________________________________________________________________________________
-        
+        //___________________________________________________________________________________________________
+
         public void EnableNextLevel()
         {
             OnEnableNextLevel?.Invoke();
+        }
+
+        //___________________________________________________________________________________________________
+
+        public void CrashPlane()
+        {
+            OnCrashPlane?.Invoke();
         }
     }
 }

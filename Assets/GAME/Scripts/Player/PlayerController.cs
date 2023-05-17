@@ -12,9 +12,6 @@ namespace YU.Template
         const string strLayerAttackable = "Attackable";
         const string strLayerMoney = "Money";
 
-
-
-
         private int nLayerBorder;
         private int nLayerAirField;
         private int nLayerAttackable;
@@ -25,6 +22,8 @@ namespace YU.Template
         [SerializeField] private Transform airfieldStartPoint, airfieldEndPoint;
         [SerializeField] private Transform visuals;
         [SerializeField] private ParticleSystem upgradeParticle;
+        [SerializeField] private ParticleSystem crashParticle;
+
 
         [Space]
 
@@ -37,20 +36,21 @@ namespace YU.Template
         [SerializeField] private float playerHeight = 3f;
         [SerializeField] private float sphereCastRadius = 1.5f;
 
+        [SerializeField] private float crashRotationSpeed = 10f;
+
+
         [SerializeField] private float raycastDistance = 2f;
         [SerializeField] private float rotationSpeed = 720f;
         [SerializeField] private float takeOffDuration = 0.5f;
         [SerializeField] private float maxRollAngle = 30f;
         [SerializeField] private float smoothness = 10f;
 
-
         [Space]
 
         [SerializeField] private bool canFly = false;
         [SerializeField] private bool isFlying = false;
         [SerializeField] private bool isLanding = false;
-
-
+        [SerializeField] private bool isCrashed = false;
 
 
         private int _detectedEnemyCount;
@@ -82,6 +82,7 @@ namespace YU.Template
             LevelManager.Instance.controller.OnBombCapacityUpgraded += OnBombCapacityUpgraded;
             LevelManager.Instance.controller.OnArmorUpgraded += OnArmorUpgraded;
             LevelManager.Instance.controller.OnDamageUpgraded += OnDamageUpgraded;
+            LevelManager.Instance.controller.OnCrashPlane += OnCrashPlane;
 
             GameEngine.Instance.OnPrepareNewGame += OnPrepareNewGame;
         }
@@ -95,6 +96,7 @@ namespace YU.Template
             LevelManager.Instance.controller.OnBombCapacityUpgraded -= OnBombCapacityUpgraded;
             LevelManager.Instance.controller.OnArmorUpgraded -= OnArmorUpgraded;
             LevelManager.Instance.controller.OnDamageUpgraded -= OnDamageUpgraded;
+            LevelManager.Instance.controller.OnCrashPlane -= OnCrashPlane;
 
             GameEngine.Instance.OnPrepareNewGame -= OnPrepareNewGame;
         }
@@ -114,6 +116,11 @@ namespace YU.Template
         private void FixedUpdate()
         {
             if (!GameEngine.Instance.IsPlaying())
+            {
+                return;
+            }
+
+            if (isCrashed)
             {
                 return;
             }
@@ -162,9 +169,6 @@ namespace YU.Template
             {
                 detectedEnemyCount = detectedEnemy;
             }
-
-
-
         }
 
         //___________________________________________________________________________________________________
@@ -209,11 +213,10 @@ namespace YU.Template
 
         //___________________________________________________________________________________________________
 
-
         private void PlaneMovement(Vector3 moveDir)
         {
             transform.position += transform.forward * flySpeed * Time.deltaTime;
-            if (moveDir != Vector3.zero)
+            if (moveDir != Vector3.zero && !isCrashed)
             {
                 Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
@@ -225,7 +228,7 @@ namespace YU.Template
         private void ApplyRollingAnimation(Vector3 moveDir)
         {
             // Calculate the roll angle based on the input direction
-            float rollAngle = -Mathf.Clamp(moveDir.x+ moveDir.z, -1f, 1f) * maxRollAngle;
+            float rollAngle = -Mathf.Clamp(moveDir.x + moveDir.z, -1f, 1f) * maxRollAngle;
 
             // Apply the roll animation to the visuals GameObject
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, rollAngle);
@@ -253,21 +256,16 @@ namespace YU.Template
 
                 transform.DOMove(airfieldEndPoint.position, takeOffDuration * 4f).SetEase(Ease.Unset);
             });
-
-
         }
 
         //___________________________________________________________________________________________________
 
         private void LandThePlane()
         {
-
-
             float fTime = Vector3.Distance(transform.position, airfieldEndPoint.position) / flySpeed;
 
             transform.DOMove(airfieldEndPoint.position, fTime).OnComplete(() =>
             {
-
                 Quaternion targetRotation = Quaternion.Euler(Vector3.zero);
                 visuals.localRotation = targetRotation;
 
@@ -301,10 +299,46 @@ namespace YU.Template
                 {
                     upgradeParticle.Play();
                 }
+            }
+        }
 
+        //___________________________________________________________________________________________________
+        private void StartCrashSequence()
+        {
+            if (isCrashed)
+            {
+                return;
             }
 
+            isCrashed = true;
+            CrashSequence();
         }
+
+        //___________________________________________________________________________________________________
+
+        private void CrashSequence()
+        {
+            crashParticle.Play();
+            Vector3 startPosition = transform.position;
+
+            Sequence crashSequence = DOTween.Sequence();
+
+            // Move the plane downwards
+            crashSequence.Append(transform.DOMoveY(0f, 3f));
+
+            // Rotate the plane randomly
+            crashSequence.Append(transform.DORotate(new Vector3(0f,
+                Random.Range(-crashRotationSpeed, crashRotationSpeed),
+                Random.Range(-crashRotationSpeed, crashRotationSpeed)), 3f));
+
+            // TO DO: implement a crashing FX here
+            crashSequence.OnComplete(() =>
+            {
+                LevelManager.Instance.controller.FailLevel();
+                crashParticle.Stop();
+            });
+        }
+
 
         // EVENTS
         //___________________________________________________________________________________________________
@@ -315,10 +349,10 @@ namespace YU.Template
             canFly = false;
             isFlying = false;
             isLanding = false;
+            isCrashed = false;
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
             visuals.transform.localRotation = Quaternion.identity;
-
 
         }
 
@@ -351,7 +385,12 @@ namespace YU.Template
             PlayParticle();
         }
 
-    }
+        //___________________________________________________________________________________________________
 
+        void OnCrashPlane()
+        {
+            StartCrashSequence();
+        }
+    }
 }
 

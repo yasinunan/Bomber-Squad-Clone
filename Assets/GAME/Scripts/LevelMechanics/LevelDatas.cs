@@ -359,7 +359,8 @@ namespace YU.Template
             {
                 currentHealth = 0f;
                 LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
-                LevelManager.Instance.controller.FailLevel();
+                LevelManager.Instance.controller.CrashPlane();
+                //LevelManager.Instance.controller.FailLevel();
             }
             else
             {
@@ -367,9 +368,6 @@ namespace YU.Template
                 LevelManager.Instance.controller.HealthChanged(currentHealth, maxHealth);
             }
         }
-
-        //___________________________________________________________________________________________________
-
 
         //___________________________________________________________________________________________________
 
